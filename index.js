@@ -188,21 +188,36 @@ function setDefaultAnimationTransform() {
 }
 
 function animationRunner() {
+    /*
+        ANIMATION OPTIONS
+     */
+    // These settings might have impact on performace
+    const SCROLL_FPS = 24;
+
+    // SYSTEM ANIMATION SETTINGS
     let animationStart = new Date(),
         animationPrevTime = animationStart;
 
+    // DOM ELEMENTS
     const animationSection = document.getElementsByClassName('section')[0],
+        blocks = document.getElementsByClassName('block'),
         pictures = document.getElementsByClassName('picture'),
         shadows = document.getElementsByClassName('shadow');
 
-    const innerWidth = window.innerWidth,
+    // SIZES
+    const innerClientWidth = window.innerWidth,
+        blockWidth = blocks[0].offsetWidth,
         animationSectionWidth = animationSection.offsetWidth,
-        animationToBeScrolled = animationSectionWidth - innerWidth,
+        animationToBeScrolled = animationSectionWidth - innerClientWidth,
         animationScrollStep = 2;
 
-    let visiblePictures = [],
-        visibleShadows = [];
+    // ANIMATION CALCULATIONS
+    const blocksToBeFittedInWindow = innerClientWidth / blockWidth,
+        numberOfTrackedBlockSimultaneously = Math.round(blocksToBeFittedInWindow + 1);
 
+    let visibleBlocksIndexes = [];
+
+    // SYSTEM ANIMATION
     const SCROLL_DIRECTION_RIGHT = 1,
         SCROLL_DIRECTION_LEFT = -1,
         ANIMATION_DEFAULT_SCROLLED = 0;
@@ -210,13 +225,21 @@ function animationRunner() {
     let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
         scrollDirection = SCROLL_DIRECTION_LEFT;
 
-    requestAnimationFrame(proceedAnimation);
+    function setStartSettings() {
+        for(let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
+            visibleBlocksIndexes.push(i);
+        }
+    }
+
+    function updateVisibleBlocksIndexes() {
+
+    }
 
     function proceedAnimation(timestamp) {
         const animationCurrentTime = new Date(),
             fps = animationCurrentTime - animationPrevTime;
 
-        if (fps < 30) {
+        if (fps < SCROLL_FPS) {
             requestAnimationFrame(proceedAnimation);
             return;
         }
@@ -224,11 +247,13 @@ function animationRunner() {
         /*
             Proceed animation
          */
+        // ANIMATE section moving
         const sectionAfterScroll = animationScrolled + (animationScrollStep * scrollDirection);
         animationSection.style.left = sectionAfterScroll + 'px';
 
         animationScrolled = sectionAfterScroll;
 
+        // ANIMATION SCROLL DIRECTION
         if (
             Math.abs(animationScrolled) > animationToBeScrolled
             || animationScrolled === ANIMATION_DEFAULT_SCROLLED
@@ -239,10 +264,15 @@ function animationRunner() {
                 : SCROLL_DIRECTION_LEFT;
         }
 
+        console.log(visibleBlocksIndexes);
+
         /*
             Finish animation
          */
         animationPrevTime = new Date();
         requestAnimationFrame(proceedAnimation);
     }
+
+    setStartSettings();
+    requestAnimationFrame(proceedAnimation);
 }
