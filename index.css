@@ -15,7 +15,7 @@ body {
     NEEDED CODE FOR ANIMATION
 */
 .base {
-    height: 100vh;
+    height: 125vh;
 }
 
 .animation__wrapper {
@@ -39,6 +39,7 @@ body {
 }
 
 .section {
+    position: absolute;
     display: flex;
 }
 
