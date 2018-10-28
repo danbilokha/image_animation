@@ -6,7 +6,8 @@ function proceedExecution() {
         animationElem = document.getElementsByClassName('animation')[0],
         sectionElem = document.getElementsByClassName('section')[0];
 
-    runAsync(
+    // UNCOMMENT NEXT FUNCTION IF ANIMATION SHOULD PLAY ONLY AT SCROLLING
+    /*runAsync(
         changeStyles,
         baseElem,
         sectionElem,
@@ -14,7 +15,7 @@ function proceedExecution() {
             {'style.height': 'offsetWidth'},
             {'style.height': 'px'}
         ]
-    );
+    );*/
 
     runAnimation();
 }
@@ -87,85 +88,85 @@ function runAsync(fn, ...param) {
 
  */
 function runAnimation() {
-    setDefaultAnimationTransform()
-}
 
-function setDefaultAnimationTransform() {
-    const REVERSE_ORDER = {},
-        DIRECT_ORDER = {},
-        TRANSLATE_3D_MAX_X_VALUE = 10,
-        TRANSLATE_3D_MAX_Y_VALUE = 5,
-        CALCULATION_SALT = 3,
-        PICTURE_DIMENSION_VALUE = 0,
-        SHADOW_DIMENSION_VALUE = -1,
-        UNIT_TRANSLATE_3D_X = 'vw',
-        UNIT_TRANSLATE_3D_Y = 'vh',
-        UNIT_TRANSLATE_3D_Z = 'px';
 
-    let blocks = document.getElementsByClassName('block'),
-        foundedBlocks = blocks.length;
+    setDefaultAnimationTransform();
 
-    for (let i = 0; i < foundedBlocks; i += 1) {
-        let blockRowFirst = blocks[i].getElementsByClassName('row-first'),
-            foundedRowsFirst = blockRowFirst.length,
-            blockRowSecond = blocks[i].getElementsByClassName('row-second'),
-            foundedRowsSecond = blockRowSecond.length;
+    function setDefaultAnimationTransform() {
+        const REVERSE_ORDER = {},
+            DIRECT_ORDER = {},
+            TRANSLATE_3D_MAX_X_VALUE = 10,
+            TRANSLATE_3D_MAX_Y_VALUE = 5,
+            CALCULATION_SALT = 3,
+            PICTURE_DIMENSION_VALUE = 0,
+            SHADOW_DIMENSION_VALUE = -1,
+            UNIT_TRANSLATE_3D_X = 'vw',
+            UNIT_TRANSLATE_3D_Y = 'vh',
+            UNIT_TRANSLATE_3D_Z = 'px';
 
-        // set default translate3d synchronously
-        setRow(blockRowFirst[0], DIRECT_ORDER);
-        setRow(blockRowSecond[0], REVERSE_ORDER);
+        let blocks = document.getElementsByClassName('block'),
+            foundedBlocks = blocks.length;
 
-        if (foundedRowsFirst > 1 || blockRowSecond > 1) {
-            // set default translate3d asynchronously starting from the second block
-            for (let j = 1; j < foundedRowsFirst || foundedRowsSecond; j += 1) {
-                runAsync(setRow, blockRowFirst[j], DIRECT_ORDER);
-                runAsync(setRow, blockRowSecond[j], REVERSE_ORDER);
+        for (let i = 0; i < foundedBlocks; i += 1) {
+            let blockRowFirst = blocks[i].getElementsByClassName('row-first'),
+                foundedRowsFirst = blockRowFirst.length,
+                blockRowSecond = blocks[i].getElementsByClassName('row-second'),
+                foundedRowsSecond = blockRowSecond.length;
+
+            // set default translate3d synchronously
+            setRow(blockRowFirst[0], DIRECT_ORDER);
+            setRow(blockRowSecond[0], REVERSE_ORDER);
+
+            if (foundedRowsFirst > 1 || blockRowSecond > 1) {
+                // set default translate3d asynchronously starting from the second block
+                for (let j = 1; j < foundedRowsFirst || foundedRowsSecond; j += 1) {
+                    runAsync(setRow, blockRowFirst[j], DIRECT_ORDER);
+                    runAsync(setRow, blockRowSecond[j], REVERSE_ORDER);
+                }
             }
         }
-    }
 
-    function setRow(rowElem, order = DIRECT_ORDER) {
-        let pictures = rowElem.getElementsByClassName('picture'),
-            foundedPicturesLen = pictures.length,
-            shadows = rowElem.getElementsByClassName('shadow'),
-            //foundedShadowsLen = shadows.length,
-            isFloating = (order === DIRECT_ORDER) ? -1 : 1;
+        function setRow(rowElem, order = DIRECT_ORDER) {
+            let pictures = rowElem.getElementsByClassName('picture'),
+                foundedPicturesLen = pictures.length,
+                shadows = rowElem.getElementsByClassName('shadow'),
+                //foundedShadowsLen = shadows.length,
+                isFloating = (order === DIRECT_ORDER) ? -1 : 1;
 
-        // Use foundedPicturesLen here because count of pictures is equal to
-        // count of shadows
-        for (let i = 0; i < foundedPicturesLen; i += 1) {
-            const picture = pictures[i],
-                shadow = shadows[i],
-                shadow_x = Math.random() * TRANSLATE_3D_MAX_X_VALUE,
-                shadow_y = shadow_x + (Math.random() * CALCULATION_SALT),
-                picture_x = shadow_x + (Math.random() * CALCULATION_SALT) * isFloating,
-                picture_y = shadow_x + (Math.random() * CALCULATION_SALT) * isFloating;
+            // Use foundedPicturesLen here because count of pictures is equal to
+            // count of shadows
+            for (let i = 0; i < foundedPicturesLen; i += 1) {
+                const picture = pictures[i],
+                    shadow = shadows[i],
+                    shadow_x = Math.random() * TRANSLATE_3D_MAX_X_VALUE,
+                    shadow_y = shadow_x + (Math.random() * CALCULATION_SALT),
+                    picture_x = shadow_x + (Math.random() * CALCULATION_SALT) * isFloating,
+                    picture_y = shadow_x + (Math.random() * CALCULATION_SALT) * isFloating;
 
-            setTranslate3d(
-                picture,
-                picture_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE * isFloating,
-                picture_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE * isFloating,
-                PICTURE_DIMENSION_VALUE
-            );
+                setTranslate3d(
+                    picture,
+                    picture_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE * isFloating,
+                    picture_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE * isFloating,
+                    PICTURE_DIMENSION_VALUE
+                );
 
-            setTranslate3d(
-                shadow,
-                shadow_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE,
-                shadow_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE,
-                SHADOW_DIMENSION_VALUE
-            );
+                setTranslate3d(
+                    shadow,
+                    shadow_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE,
+                    shadow_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE,
+                    SHADOW_DIMENSION_VALUE
+                );
 
-            isFloating *= -1;
+                isFloating *= -1;
+            }
         }
-    }
 
-    function setTranslate3d(elem, tx, ty, tz) {
-        console.log(elem, tx, ty, tz);
+        function setTranslate3d(elem, tx, ty, tz) {
+            let x = tx + UNIT_TRANSLATE_3D_X,
+                y = ty + UNIT_TRANSLATE_3D_Y,
+                z = tz + UNIT_TRANSLATE_3D_Z;
 
-        let x = tx + UNIT_TRANSLATE_3D_X,
-            y = ty + UNIT_TRANSLATE_3D_Y,
-            z = tz + UNIT_TRANSLATE_3D_Z;
-
-        elem.style.transform = `translate3d(${x}, ${y}, ${z})`;
+            elem.style.transform = `translate3d(${x}, ${y}, ${z})`;
+        }
     }
 }
