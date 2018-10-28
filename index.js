@@ -109,17 +109,20 @@ function animation() {
     animationRunner();
 }
 
+const virtualElements = {},
+    REVERSE_ORDER = {},
+    DIRECT_ORDER = {},
+    TRANSLATE_3D_MAX_X_VALUE = 10,
+    TRANSLATE_3D_MAX_Y_VALUE = 5,
+    CALCULATION_SALT = 3,
+    PICTURE_DIMENSION_VALUE = 0,
+    SHADOW_DIMENSION_VALUE = -1,
+    UNIT_TRANSLATE_3D_X = 'vw',
+    UNIT_TRANSLATE_3D_Y = 'vh',
+    UNIT_TRANSLATE_3D_Z = 'px';
+
 function setDefaultAnimationTransform() {
-    const REVERSE_ORDER = {},
-        DIRECT_ORDER = {},
-        TRANSLATE_3D_MAX_X_VALUE = 10,
-        TRANSLATE_3D_MAX_Y_VALUE = 5,
-        CALCULATION_SALT = 3,
-        PICTURE_DIMENSION_VALUE = 0,
-        SHADOW_DIMENSION_VALUE = -1,
-        UNIT_TRANSLATE_3D_X = 'vw',
-        UNIT_TRANSLATE_3D_Y = 'vh',
-        UNIT_TRANSLATE_3D_Z = 'px';
+
 
     let blocks = document.getElementsByClassName('block'),
         foundedBlocks = blocks.length;
@@ -193,6 +196,7 @@ function animationRunner() {
      */
     // These settings might have impact on performace
     const SCROLL_FPS = 24,
+        ANIMATION_TRANSLATE_3D_MOVING = 0.05,
         ANIMATION_SCROLL_STEP = 2;
 
     // SYSTEM ANIMATION SETTINGS
@@ -210,8 +214,6 @@ function animationRunner() {
         blockWidth = blocks[0].offsetWidth,
         animationSectionWidth = animationSection.offsetWidth,
         animationToBeScrolled = animationSectionWidth - innerClientWidth;
-
-    console.log(innerClientWidth);
 
     // ANIMATION CALCULATIONS
     const blocksToBeFittedInWindow = innerClientWidth / blockWidth,
@@ -255,8 +257,6 @@ function animationRunner() {
 
             return [...currentTrackedBlocks, lastTrackBlock, nextBlockIndex];
         }
-        
-        //console.log(lastBlockX,  blockWidth * numberOfTrackedBlockSimultaneously);
 
         // TODO: NEED TO CHANGE
         if (Math.abs(lastBlockX) > (blockWidth * numberOfTrackedBlockSimultaneously - blockWidth / 2)) {
@@ -276,6 +276,7 @@ function animationRunner() {
         const animationCurrentTime = new Date(),
             fps = animationCurrentTime - animationPrevTime;
 
+        // In order do not proceed animation too often
         if (fps < SCROLL_FPS) {
             requestAnimationFrame(proceedAnimation);
             return;
@@ -290,19 +291,20 @@ function animationRunner() {
 
         animationScrolled = sectionAfterScroll;
 
+        animatePicturesMoving(blocks, visibleBlocksIndexes, scrollDirection);
+
         // ANIMATION SCROLL DIRECTION
         if (
             Math.abs(animationScrolled) > animationToBeScrolled
             || animationScrolled === ANIMATION_DEFAULT_SCROLLED
         ) {
-            console.log('animation direction scroll finished');
+            console.info('animation direction scroll finished. Change direction');
             scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
                 ? SCROLL_DIRECTION_RIGHT
                 : SCROLL_DIRECTION_LEFT;
         }
 
         visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes);
-        console.log(visibleBlocksIndexes);
 
         /*
             Finish animation
@@ -311,5 +313,48 @@ function animationRunner() {
         requestAnimationFrame(proceedAnimation);
     }
 
+    // Start first animation
     requestAnimationFrame(proceedAnimation);
+
+    function animatePicturesMoving(blocks, trackedBlocksIndexes, direction) {
+        trackedBlocksIndexes.forEach((index) => {
+            const blockPictures = blocks[index].getElementsByClassName('picture'),
+                blockPicturesLen = blockPictures.length,
+                blockShadows = blocks[index].getElementsByClassName('shadow'),
+                blockShadowsLen = blockShadows.length;
+
+            // SET PICTURES
+            for (let i = 0; i < blockPicturesLen; i += 1) {
+                const {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(blockPictures[i].style.transform);
+
+                const xPicNew = (+xPic + ANIMATION_TRANSLATE_3D_MOVING * direction) + UNIT_TRANSLATE_3D_X,
+                    yPicNew = (+yPic + ANIMATION_TRANSLATE_3D_MOVING * direction) + UNIT_TRANSLATE_3D_Y,
+                    zPicNew = zPic + UNIT_TRANSLATE_3D_Z;
+
+                blockPictures[i].style.transform = `translate3d(${xPicNew}, ${yPicNew}, ${zPicNew})`;
+            }
+
+            // SET SHADOW
+            for (let i = 0; i < blockShadowsLen; i += 1) {
+                const {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(blockShadows[i].style.transform);
+
+                const xPicNew = (+xPic + Math.random() * ANIMATION_TRANSLATE_3D_MOVING * direction) + UNIT_TRANSLATE_3D_X,
+                    yPicNew = (+yPic + Math.random() * ANIMATION_TRANSLATE_3D_MOVING * direction) + UNIT_TRANSLATE_3D_Y,
+                    zPicNew = zPic + UNIT_TRANSLATE_3D_Z;
+
+                blockShadows[i].style.transform = `translate3d(${xPicNew}, ${yPicNew}, ${zPicNew})`;
+            }
+        });
+    }
+}
+
+function getTranslate3dValues(cssTextStyleValue) {
+    const cssText = cssTextStyleValue.split(','),
+        x = cssText[0].split('(')[1].slice(0, -2),
+        y = cssText[1].slice(0, -2),
+        z = cssText[2].slice(0, -3);
+
+    debugger;
+
+    return {x, y, z};
 }
