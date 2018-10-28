@@ -1,0 +1,100 @@
+/*
+    FOR TESTING PURPOSE
+    TODO: DELETE AFTER TEST
+*/
+body {
+    margin: 0;
+}
+
+.content {
+    height: 700px;
+    background: red;
+}
+
+/*
+    NEEDED CODE FOR ANIMATION
+*/
+
+/*
+ TODO: Uncomment if would be choosen use static approach
+ */
+/*.base {*/
+/*height: 300vh;*/
+/*}*/
+
+.animation__wrapper {
+    max-width: 100%;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+}
+
+.animation {
+    position: relative;
+    display: flex;
+    overflow: visible;
+    width: 100vw;
+    height: 100vh;
+    /*justify-content: center;*/
+    align-items: center;
+    background-color: transparent;
+    transform: rotateX(49deg) rotateY(0deg) rotateZ(39deg);
+    transform-style: preserve-3d;
+}
+
+.section {
+    display: flex;
+}
+
+.block__row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.row-first {
+    align-items: flex-end;
+}
+
+.picture__container {
+    position: relative;
+    width: 20vw;
+    margin-right: 1vw;
+    margin-bottom: 2vh;
+    flex: 0 auto;
+}
+
+.picture {
+    height: 150px;
+
+    position: relative;
+    z-index: 900;
+    display: block;
+    flex: 1;
+    box-shadow: none;
+
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.shadow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    transform-origin: 50% 100%;
+
+    will-change: opacity, trasform;
+}
+
+.shadow-bold {
+    border-radius: 0;
+    background-color: black;
+    box-shadow: none;
+}
+
+.default_transform {
+}
