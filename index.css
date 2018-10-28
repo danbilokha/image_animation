@@ -8,7 +8,7 @@ body {
 
 .content {
     height: 700px;
-    background: red;
+    background: gray;
 }
 
 /*
@@ -16,6 +16,7 @@ body {
 */
 .base {
     height: 125vh;
+    background: slategray;
 }
 
 .animation__wrapper {
@@ -41,6 +42,7 @@ body {
 .section {
     position: absolute;
     display: flex;
+    transition: 2s; /* CHANGE SECTION TRANSITION HERE */
 }
 
 .block__row {
@@ -68,6 +70,7 @@ body {
     display: block;
     flex: 1;
     box-shadow: none;
+    transition: 5s; /* CHANGE PICTURE TRANSITION HERE */
 
     transform-style: preserve-3d;
     will-change: transform;
@@ -83,6 +86,7 @@ body {
     width: 100%;
     height: auto;
     transform-origin: 50% 100%;
+    transition: 5s; /* CHANGE SHADOW TRANSITION HERE */
 
     will-change: opacity, trasform;
 }
