@@ -112,10 +112,7 @@ function animation() {
 const virtualElements = {},
     REVERSE_ORDER = 1,
     DIRECT_ORDER = -1,
-    // MIGHT BE CHANGED
-    TRANSLATE_3D_MAX_X_VALUE = 5,
-    TRANSLATE_3D_MAX_Y_VALUE = 5,
-    CALCULATION_SALT = 3,
+    DEFAULT_TRANSLATE_3D_MAX_VALUE = 5,
     // NO CHANGABLE
     PICTURE_DIMENSION_VALUE = 0,
     SHADOW_DIMENSION_VALUE = -1,
@@ -127,7 +124,12 @@ const virtualElements = {},
     // These settings might have impact on performance
     SCROLL_FPS = 1000,
     ANIMATION_TRANSLATE_3D_MOVING = 1,
-    ANIMATION_SCROLL_STEP = 200;
+    DEFAULT_ANIMATION_SCROLL_STEP = 200;
+
+let // MIGHT BE CHANGED
+    TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE,
+    CALCULATION_SALT = 3,
+    ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
 
 function setDefaultAnimationSettings() {
     let blocks = document.getElementsByClassName('block'),
@@ -164,14 +166,14 @@ function setDefaultAnimationSettings() {
         for (let i = 0; i < foundedPicturesLen; i += 1) {
             const picture = pictures[i],
                 shadow = shadows[i],
-                shadow_x = Math.random() * TRANSLATE_3D_MAX_X_VALUE,
+                shadow_x = Math.random() * TRANSLATE_3D_MAX_VALUE,
                 shadow_y = shadow_x + (Math.random() * CALCULATION_SALT),
                 picture_x = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating,
                 picture_y = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating;
 
             setTranslate3d(
                 picture,
-                picture_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE * isFloating,
+                picture_x, //Math.random() * TRANSLATE_3D_MAX_VALUE * isFloating,
                 picture_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE * isFloating,
                 PICTURE_DIMENSION_VALUE
             );
@@ -179,7 +181,7 @@ function setDefaultAnimationSettings() {
 
             setTranslate3d(
                 shadow,
-                shadow_x, //Math.random() * TRANSLATE_3D_MAX_X_VALUE,
+                shadow_x, //Math.random() * TRANSLATE_3D_MAX_VALUE,
                 shadow_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE,
                 SHADOW_DIMENSION_VALUE
             );
@@ -421,18 +423,22 @@ function animationRunner() {
             clearTimeout(timeOutId);
             window.cancelAnimationFrame(animationLoopHandler);
 
+            TRANSLATE_3D_MAX_VALUE = 15;
+            ANIMATION_SCROLL_STEP = 400;
             if (userCurrTop < userPrevTop) {
                 console.log('up');
                 scrollDirection = REVERSE_ORDER;
                 proceedAnimation();
             } else {
+                console.log('down');
                 scrollDirection = DIRECT_ORDER;
                 proceedAnimation();
-                console.log('down');
             }
             userPrevTop = userCurrTop;
 
             timeOutId = setTimeout(() => {
+                TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;
+                ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
                 animationLoopHandler = requestAnimationFrame(proceedAnimation);
             }, 1500);
         }
