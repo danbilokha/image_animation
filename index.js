@@ -192,7 +192,8 @@ function animationRunner() {
         ANIMATION OPTIONS
      */
     // These settings might have impact on performace
-    const SCROLL_FPS = 24;
+    const SCROLL_FPS = 24,
+        ANIMATION_SCROLL_STEP = 2;
 
     // SYSTEM ANIMATION SETTINGS
     let animationStart = new Date(),
@@ -208,14 +209,15 @@ function animationRunner() {
     const innerClientWidth = window.innerWidth,
         blockWidth = blocks[0].offsetWidth,
         animationSectionWidth = animationSection.offsetWidth,
-        animationToBeScrolled = animationSectionWidth - innerClientWidth,
-        animationScrollStep = 2;
+        animationToBeScrolled = animationSectionWidth - innerClientWidth;
+
+    console.log(innerClientWidth);
 
     // ANIMATION CALCULATIONS
     const blocksToBeFittedInWindow = innerClientWidth / blockWidth,
-        numberOfTrackedBlockSimultaneously = Math.round(blocksToBeFittedInWindow + 1);
+        numberOfTrackedBlockSimultaneously = Math.round(blocksToBeFittedInWindow + 2);
 
-    let visibleBlocksIndexes = [];
+    let visibleBlocksIndexes = setStartTrackBlocks(numberOfTrackedBlockSimultaneously);
 
     // SYSTEM ANIMATION
     const SCROLL_DIRECTION_RIGHT = 1,
@@ -225,14 +227,49 @@ function animationRunner() {
     let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
         scrollDirection = SCROLL_DIRECTION_LEFT;
 
-    function setStartSettings() {
-        for(let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
-            visibleBlocksIndexes.push(i);
+    function setStartTrackBlocks(numberOfTrackedBlockSimultaneously) {
+        let result = [];
+
+        for (let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
+            result.push(i);
         }
+
+        return result;
     }
 
-    function updateVisibleBlocksIndexes() {
+    function updateTrackBlocks(blocks, currentTracked) {
+        let currentTrackedBlocks = [...currentTracked];
 
+        const firstTrackBlock = currentTrackedBlocks.splice(0, 1)[0],
+            lastTrackBlock = currentTrackedBlocks.splice(-1, 1)[0];
+
+        const firstBlockX = blocks[firstTrackBlock].getBoundingClientRect().x,
+            lastBlockX = blocks[lastTrackBlock].getBoundingClientRect().x;
+
+        if ((Math.abs(firstBlockX) - blockWidth / 4) > blockWidth) {
+            const nextBlockIndex = lastTrackBlock + 1;
+
+            if (!blocks[nextBlockIndex]) { // NO changes - no more block left
+                return [firstTrackBlock, ...currentTrackedBlocks, lastTrackBlock];
+            }
+
+            return [...currentTrackedBlocks, lastTrackBlock, nextBlockIndex];
+        }
+        
+        //console.log(lastBlockX,  blockWidth * numberOfTrackedBlockSimultaneously);
+
+        // TODO: NEED TO CHANGE
+        if (Math.abs(lastBlockX) > (blockWidth * numberOfTrackedBlockSimultaneously - blockWidth / 2)) {
+            const prevBlockIndex = firstTrackBlock - 1;
+
+            if (!blocks[prevBlockIndex]) { // NO changes - no more block left
+                return [firstTrackBlock, ...currentTrackedBlocks, lastTrackBlock];
+            }
+
+            return [prevBlockIndex, firstTrackBlock, ...currentTrackedBlocks];
+        }
+
+        return currentTracked;
     }
 
     function proceedAnimation(timestamp) {
@@ -248,7 +285,7 @@ function animationRunner() {
             Proceed animation
          */
         // ANIMATE section moving
-        const sectionAfterScroll = animationScrolled + (animationScrollStep * scrollDirection);
+        const sectionAfterScroll = animationScrolled + (ANIMATION_SCROLL_STEP * scrollDirection);
         animationSection.style.left = sectionAfterScroll + 'px';
 
         animationScrolled = sectionAfterScroll;
@@ -264,6 +301,7 @@ function animationRunner() {
                 : SCROLL_DIRECTION_LEFT;
         }
 
+        visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes);
         console.log(visibleBlocksIndexes);
 
         /*
@@ -273,6 +311,5 @@ function animationRunner() {
         requestAnimationFrame(proceedAnimation);
     }
 
-    setStartSettings();
     requestAnimationFrame(proceedAnimation);
 }
