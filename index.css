@@ -19,7 +19,7 @@ body {
  TODO: Uncomment if would be choosen use static approach
  */
 /*.base {*/
-/*height: 300vh;*/
+/*height: 100vh;*/
 /*}*/
 
 .animation__wrapper {
@@ -97,4 +97,14 @@ body {
 }
 
 .default_transform {
+}
+
+.default_transform-image {
+    transform: scale3d(1,1,1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;
+}
+
+.default_transform-shadow {
+    opacity: 0.6;
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
 }
