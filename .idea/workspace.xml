@@ -15,9 +15,9 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.48810154">
+    <splitter split-orientation="horizontal" split-proportion="0.37652037">
       <split-first>
-        <splitter split-orientation="horizontal" split-proportion="0.5466378">
+        <splitter split-orientation="horizontal" split-proportion="0.83661973">
           <split-first>
             <leaf>
               <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
@@ -78,8 +78,8 @@
           <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="683">
-                  <caret line="278" column="28" lean-forward="false" selection-start-line="278" selection-start-column="28" selection-end-line="278" selection-end-column="28" />
+                <state relative-caret-position="399">
+                  <caret line="21" column="18" lean-forward="true" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
                   <folding>
                     <element signature="e#1215#1733#0" expanded="false" />
                     <element signature="n#!!block;n#changeStyles#0" expanded="false" />
@@ -87,7 +87,7 @@
                     <element signature="n#!!block;n#runAsync#0" expanded="false" />
                     <element signature="n#!!block;n#setDefaultAnimationSettings#0" expanded="false" />
                     <element signature="n#!!block;n#setStartTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-                    <element signature="e#11522#11629#0" expanded="false" />
+                    <element signature="e#11863#11970#0" expanded="false" />
                     <element signature="n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
                     <element signature="n#!!block;n#trackElemCoordinatesHistory#0;n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
                     <element signature="n#!!block;n#userScrollHandlerAction#0;n#!!block;n#animationRunner#0" expanded="false" />
@@ -109,7 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>numberOfTrackedBlockSimultaneously</find>
       <find>`</find>
       <find>setTranslate3d</find>
       <find>UNIT_TRANSLATE_3D_X</find>
@@ -135,10 +134,11 @@
       <find>getElemByUniqueId</find>
       <find>blocks</find>
       <find>visibleBlocksIndexes</find>
-      <find>updateTrackBlocks</find>
       <find>block</find>
       <find>updatedOpacityFirstBlock</find>
       <find>animationScrolled</find>
+      <find>updateTrackBlocks</find>
+      <find>updatedBlockOpacity</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -168,10 +168,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-556" />
-    <option name="y" value="163" />
-    <option name="width" value="1942" />
-    <option name="height" value="1102" />
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="976" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -240,12 +240,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1540647471232</updated>
-      <workItem from="1540647472512" duration="50808000" />
+      <workItem from="1540647472512" duration="55389000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50808000" />
+    <option name="totallyTimeSpent" value="55389000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1060" extended-state="6" />
@@ -342,8 +342,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="278" column="28" lean-forward="false" selection-start-line="278" selection-start-column="28" selection-end-line="278" selection-end-column="28" />
+        <state relative-caret-position="399">
+          <caret line="21" column="18" lean-forward="true" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
           <folding>
             <element signature="e#1215#1733#0" expanded="false" />
             <element signature="n#!!block;n#changeStyles#0" expanded="false" />
@@ -351,7 +351,7 @@
             <element signature="n#!!block;n#runAsync#0" expanded="false" />
             <element signature="n#!!block;n#setDefaultAnimationSettings#0" expanded="false" />
             <element signature="n#!!block;n#setStartTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-            <element signature="e#11522#11629#0" expanded="false" />
+            <element signature="e#11863#11970#0" expanded="false" />
             <element signature="n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
             <element signature="n#!!block;n#trackElemCoordinatesHistory#0;n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
             <element signature="n#!!block;n#userScrollHandlerAction#0;n#!!block;n#animationRunner#0" expanded="false" />
