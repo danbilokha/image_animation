@@ -15,7 +15,7 @@ body {
     NEEDED CODE FOR ANIMATION
 */
 .base {
-    height: 125vh;
+    height: 200vh;
     background: slategray;
 }
 
@@ -43,6 +43,10 @@ body {
     position: absolute;
     display: flex;
     transition: 2s; /* CHANGE SECTION TRANSITION HERE */
+}
+
+.block {
+    transition: 2s; /* FOR SMOOTHLY BLOCK OPACITY */
 }
 
 .block__row {
