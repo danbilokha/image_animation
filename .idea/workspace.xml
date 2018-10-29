@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="07f7ad70-0e8d-4a2d-9a30-5480cdf3cb19" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.js" afterPath="$PROJECT_DIR$/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -78,26 +79,24 @@
           <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="496">
-                  <caret line="285" column="44" lean-forward="false" selection-start-line="285" selection-start-column="44" selection-end-line="285" selection-end-column="44" />
+                <state relative-caret-position="578">
+                  <caret line="297" column="76" lean-forward="false" selection-start-line="297" selection-start-column="76" selection-end-line="297" selection-end-column="76" />
                   <folding>
-                    <element signature="e#2472#3046#0" expanded="false" />
-                    <element signature="e#3095#3654#0" expanded="false" />
-                    <element signature="e#3696#3766#0" expanded="false" />
-                    <element signature="e#3821#4046#0" expanded="false" />
-                    <element signature="e#4052#4127#0" expanded="false" />
-                    <element signature="e#4162#4203#0" expanded="false" />
-                    <element signature="e#4209#4317#0" expanded="false" />
-                    <element signature="e#4363#4541#0" expanded="false" />
-                    <element signature="e#4547#4700#0" expanded="false" />
-                    <element signature="e#4932#8118#0" expanded="false" />
-                    <element signature="e#9543#9747#0" expanded="false" />
-                    <element signature="e#9817#9909#0" expanded="false" />
-                    <element signature="e#12034#13354#0" expanded="false" />
-                    <element signature="e#13629#13748#0" expanded="false" />
-                    <element signature="e#15889#19127#0" expanded="false" />
-                    <element signature="e#18512#18704#0" expanded="false" />
-                    <element signature="e#19238#20826#0" expanded="false" />
+                    <element signature="e#2487#3061#0" expanded="false" />
+                    <element signature="e#3110#3669#0" expanded="false" />
+                    <element signature="e#3711#3781#0" expanded="false" />
+                    <element signature="e#3836#4061#0" expanded="false" />
+                    <element signature="e#4067#4142#0" expanded="false" />
+                    <element signature="e#4177#4218#0" expanded="false" />
+                    <element signature="e#4224#4332#0" expanded="false" />
+                    <element signature="e#4378#4556#0" expanded="false" />
+                    <element signature="e#4562#4715#0" expanded="false" />
+                    <element signature="e#4947#8133#0" expanded="false" />
+                    <element signature="e#9603#9807#0" expanded="false" />
+                    <element signature="e#9877#9969#0" expanded="false" />
+                    <element signature="e#11676#12996#0" expanded="false" />
+                    <element signature="e#13271#13390#0" expanded="false" />
+                    <element signature="e#18880#20468#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -116,8 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>`</find>
-      <find>setTranslate3d</find>
       <find>UNIT_TRANSLATE_3D_X</find>
       <find>animatePicturesMoving</find>
       <find>section</find>
@@ -127,7 +124,6 @@
       <find>setRow</find>
       <find>animateElementTranslate3d</find>
       <find>setDefaultAnimationTransform</find>
-      <find>elementPositions</find>
       <find>_elem</find>
       <find>getElemCoordsFromHistory</find>
       <find>scrollDirection</find>
@@ -146,6 +142,9 @@
       <find>animationScrolled</find>
       <find>updatedBlockOpacity</find>
       <find>updateTrackBlocks</find>
+      <find>elementPositions</find>
+      <find>animationScrolledMax</find>
+      <find>_animationSectionScrolled</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -248,12 +247,12 @@
       <option name="presentableId" value="Default" />
       <updated>1540647471232</updated>
       <workItem from="1540647472512" duration="55389000" />
-      <workItem from="1540830630146" duration="1753000" />
+      <workItem from="1540830630146" duration="3418000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57142000" />
+    <option name="totallyTimeSpent" value="58807000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -337,23 +336,21 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#2472#3046#0" expanded="false" />
-            <element signature="e#3095#3654#0" expanded="false" />
-            <element signature="e#3696#3766#0" expanded="false" />
-            <element signature="e#3821#4046#0" expanded="false" />
-            <element signature="e#4052#4127#0" expanded="false" />
-            <element signature="e#4162#4203#0" expanded="false" />
-            <element signature="e#4209#4317#0" expanded="false" />
-            <element signature="e#4363#4541#0" expanded="false" />
-            <element signature="e#4547#4700#0" expanded="false" />
-            <element signature="e#4932#8118#0" expanded="false" />
-            <element signature="e#9543#9747#0" expanded="false" />
-            <element signature="e#9817#9909#0" expanded="false" />
-            <element signature="e#12034#13354#0" expanded="false" />
-            <element signature="e#13629#13748#0" expanded="false" />
-            <element signature="e#15889#19127#0" expanded="false" />
-            <element signature="e#18512#18704#0" expanded="false" />
-            <element signature="e#19238#20826#0" expanded="false" />
+            <element signature="e#2487#3061#0" expanded="false" />
+            <element signature="e#3110#3669#0" expanded="false" />
+            <element signature="e#3711#3781#0" expanded="false" />
+            <element signature="e#3836#4061#0" expanded="false" />
+            <element signature="e#4067#4142#0" expanded="false" />
+            <element signature="e#4177#4218#0" expanded="false" />
+            <element signature="e#4224#4332#0" expanded="false" />
+            <element signature="e#4378#4556#0" expanded="false" />
+            <element signature="e#4562#4715#0" expanded="false" />
+            <element signature="e#4947#8133#0" expanded="false" />
+            <element signature="e#9603#9807#0" expanded="false" />
+            <element signature="e#9877#9969#0" expanded="false" />
+            <element signature="e#11676#12996#0" expanded="false" />
+            <element signature="e#13271#13390#0" expanded="false" />
+            <element signature="e#18880#20468#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -409,26 +406,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="285" column="44" lean-forward="false" selection-start-line="285" selection-start-column="44" selection-end-line="285" selection-end-column="44" />
+        <state relative-caret-position="578">
+          <caret line="297" column="76" lean-forward="false" selection-start-line="297" selection-start-column="76" selection-end-line="297" selection-end-column="76" />
           <folding>
-            <element signature="e#2472#3046#0" expanded="false" />
-            <element signature="e#3095#3654#0" expanded="false" />
-            <element signature="e#3696#3766#0" expanded="false" />
-            <element signature="e#3821#4046#0" expanded="false" />
-            <element signature="e#4052#4127#0" expanded="false" />
-            <element signature="e#4162#4203#0" expanded="false" />
-            <element signature="e#4209#4317#0" expanded="false" />
-            <element signature="e#4363#4541#0" expanded="false" />
-            <element signature="e#4547#4700#0" expanded="false" />
-            <element signature="e#4932#8118#0" expanded="false" />
-            <element signature="e#9543#9747#0" expanded="false" />
-            <element signature="e#9817#9909#0" expanded="false" />
-            <element signature="e#12034#13354#0" expanded="false" />
-            <element signature="e#13629#13748#0" expanded="false" />
-            <element signature="e#15889#19127#0" expanded="false" />
-            <element signature="e#18512#18704#0" expanded="false" />
-            <element signature="e#19238#20826#0" expanded="false" />
+            <element signature="e#2487#3061#0" expanded="false" />
+            <element signature="e#3110#3669#0" expanded="false" />
+            <element signature="e#3711#3781#0" expanded="false" />
+            <element signature="e#3836#4061#0" expanded="false" />
+            <element signature="e#4067#4142#0" expanded="false" />
+            <element signature="e#4177#4218#0" expanded="false" />
+            <element signature="e#4224#4332#0" expanded="false" />
+            <element signature="e#4378#4556#0" expanded="false" />
+            <element signature="e#4562#4715#0" expanded="false" />
+            <element signature="e#4947#8133#0" expanded="false" />
+            <element signature="e#9603#9807#0" expanded="false" />
+            <element signature="e#9877#9969#0" expanded="false" />
+            <element signature="e#11676#12996#0" expanded="false" />
+            <element signature="e#13271#13390#0" expanded="false" />
+            <element signature="e#18880#20468#0" expanded="false" />
           </folding>
         </state>
       </provider>

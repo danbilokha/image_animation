@@ -1,3 +1,5 @@
+'use strict';
+
 (function () {
     /*
         polyfill. Please, delete, if already have in your project
@@ -250,7 +252,8 @@
             isFirstAnimationRun = true;
 
         let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
-            scrollDirection = SCROLL_DIRECTION_LEFT;
+            scrollDirection = SCROLL_DIRECTION_LEFT,
+            animationSectionScrolledMax = 0;
 
         let animationLoopHandler;
 
@@ -268,48 +271,38 @@
             blocks[visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
         }
 
-        function updateTrackBlocks(blocks, currentTracked, animationScrolled, animationDirection) {
-            let scrolledInDownDirection = 0;
+        function updateTrackBlocks(blocks, currentTrackedBlocks, animationSectionScrolled, animationSectionScrollDirection) {
+            let _currentTrackedBlocks = [...currentTrackedBlocks],
+                _animationSectionScrolled = Math.abs(animationSectionScrolled),
+                _sizeSectionScrolledTo = 0;
 
-            return (function (blocks, currentTracked, animationScrolled, animationDirection) {
-                let currentTrackedBlocks = [...currentTracked];
+            if (animationSectionScrollDirection === ANIMATION_DIRECTION_DOWN) {
+                animationSectionScrolledMax = (animationSectionScrolledMax > _animationSectionScrolled)
+                    ? animationSectionScrolledMax
+                    : _animationSectionScrolled;
 
-                if (animationDirection === ANIMATION_DIRECTION_DOWN) {
-                    scrolledInDownDirection = animationScrolled;
+                _sizeSectionScrolledTo = _animationSectionScrolled;
+            }
 
-                    const blockScrolled = Math.floor(Math.abs(animationScrolled / blockWidth)) - 1;
-                    //console.log(blockScrolled);
-                    if (blockScrolled <= 0) {
-                        return [...currentTrackedBlocks];
-                    }
+            if (animationSectionScrollDirection === ANIMATION_DIRECTION_UP) {
+                _sizeSectionScrolledTo = animationSectionScrolledMax - _animationSectionScrolled;
+            }
 
-                    const scrollNormalized = animationDirection * -1,
-                        firstTracked = currentTrackedBlocks[0],
-                        lastTracked = currentTrackedBlocks[currentTrackedBlocks.length - 1];
+            const blockScrolled = Math.floor(_sizeSectionScrolledTo / blockWidth) - 1;
+            if (blockScrolled <= 0) {
+                return [..._currentTrackedBlocks];
+            }
 
-                    // check if first and last future elements exist
-                    if (!blocks[firstTracked + scrollNormalized] || !blocks[lastTracked + scrollNormalized]) {
-                        return [...currentTrackedBlocks];
-                    }
-                    return currentTrackedBlocks.map(index => index + blockScrolled * scrollNormalized);
-                }
+            const scrollNormalized = animationSectionScrollDirection * -1,
+                firstTracked = _currentTrackedBlocks[0],
+                lastTracked = _currentTrackedBlocks[_currentTrackedBlocks.length - 1];
 
-                if (animationDirection === ANIMATION_DIRECTION_UP) {
-                    console.log(scrolledInDownDirection);
+            // Check IF first and last future elements exist
+            if (!blocks[firstTracked + scrollNormalized] || !blocks[lastTracked + scrollNormalized]) {
+                return [..._currentTrackedBlocks];
+            }
 
-                    // const blockScrolled = Math.floor(
-                    //     Math.abs((animationScrolled - blockWidth * blocks.length) / blockWidth)
-                    // ) - 1;
-
-                    console.log(
-                        //(Math.abs(animationScrolled) - blockWidth * blocks.length) / blockWidth,
-                        animationScrolled,
-                        //blockScrolled
-                    );
-                }
-
-                return [...currentTrackedBlocks];
-            })(blocks, currentTracked, animationScrolled, animationDirection);
+            return _currentTrackedBlocks.map(index => index + blockScrolled * scrollNormalized);
         }
 
         function updatedBlockOpacity(blocks, visibleBlocks, animationDirection) {
