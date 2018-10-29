@@ -46,7 +46,7 @@ body {
 }
 
 .block {
-    transition: 2s; /* FOR SMOOTHLY BLOCK OPACITY */
+    transition: 4s; /* FOR SMOOTHLY BLOCK OPACITY */
 }
 
 .block__row {
