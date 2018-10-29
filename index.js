@@ -275,6 +275,8 @@
                 let currentTrackedBlocks = [...currentTracked];
 
                 if (animationDirection === ANIMATION_DIRECTION_DOWN) {
+                    scrolledInDownDirection = animationScrolled;
+
                     const blockScrolled = Math.floor(Math.abs(animationScrolled / blockWidth)) - 1;
                     //console.log(blockScrolled);
                     if (blockScrolled <= 0) {
@@ -293,9 +295,12 @@
                 }
 
                 if (animationDirection === ANIMATION_DIRECTION_UP) {
-                    const blockScrolled = Math.floor(
-                        Math.abs((animationScrolled - blockWidth * blocks.length) / blockWidth)
-                    ) - 1;
+                    console.log(scrolledInDownDirection);
+
+                    // const blockScrolled = Math.floor(
+                    //     Math.abs((animationScrolled - blockWidth * blocks.length) / blockWidth)
+                    // ) - 1;
+
                     console.log(
                         //(Math.abs(animationScrolled) - blockWidth * blocks.length) / blockWidth,
                         animationScrolled,
@@ -341,6 +346,7 @@
         function proceedAnimation() {
             const animationCurrentTime = new Date(),
                 fps = animationCurrentTime - animationPrevTime;
+
             // In order do not proceed animation too often
             if (fps < SCROLL_FPS && !isFirstAnimationRun) {
                 animationLoopHandler = requestAnimationFrame(proceedAnimation);
@@ -350,21 +356,34 @@
             }
 
             /*
-                Proceed animation
+                ============================================================
+                                    Proceed animation
+                ============================================================
              */
-            // ANIMATE section moving
+
+            /*
+                ============================================================
+                                    Picture moving animation
+                ============================================================
+             */
+            proceedPictureMoving(blocks, visibleBlocksIndexes, scrollDirection);
+
+            /*
+                ============================================================
+                                    Section moving animation
+                ============================================================
+             */
             const sectionAfterScroll = animationScrolled + (ANIMATION_SCROLL_STEP * scrollDirection);
             animationSection.style.left = sectionAfterScroll + 'px';
 
             animationScrolled = sectionAfterScroll;
 
-            animatePicturesMoving(blocks, visibleBlocksIndexes, scrollDirection);
-
             visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes, animationScrolled, scrollDirection);
             console.log('visibleBlocksIndexes', visibleBlocksIndexes);
+
             updatedBlockOpacity(blocks, visibleBlocksIndexes, scrollDirection);
 
-            // ANIMATION SCROLL DIRECTION
+            // Check animation scroll direction
             if (
                 Math.abs(animationScrolled) > animationToBeScrolled
                 || animationScrolled === ANIMATION_DEFAULT_SCROLLED
@@ -374,6 +393,7 @@
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
             }
+
             /*
                 Finish animation
              */
@@ -381,7 +401,7 @@
             animationLoopHandler = requestAnimationFrame(proceedAnimation);
         }
 
-        function animatePicturesMoving(blocks, trackedBlocksIndexes, direction) {
+        function proceedPictureMoving(blocks, trackedBlocksIndexes, direction) {
             trackedBlocksIndexes.forEach((index) => {
                 const blockPictures = blocks[index].getElementsByClassName('picture'),
                     blockPicturesLen = blockPictures.length,
@@ -461,9 +481,6 @@
             }
         }
 
-        // Start first automatic animation
-        animationLoopHandler = requestAnimationFrame(proceedAnimation);
-
         /*
             USER INTERACTING WITH WEB PAGE
          */
@@ -506,7 +523,8 @@
         }
 
         //userScrollHandlerAction();
+
+        // Start first automatic animation
+        animationLoopHandler = requestAnimationFrame(proceedAnimation);
     }
 })();
-
-//Changed?
