@@ -237,8 +237,8 @@
         const blocksToBeFittedInWindow = innerClientWidth / blockWidth,
             numberOfTrackedBlockSimultaneously = Math.round(blocksToBeFittedInWindow + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
 
-        let visibleBlocksIndexes = setStartTrackBlocks(numberOfTrackedBlockSimultaneously);
-        setStartBlockOpacity(blocks, visibleBlocksIndexes);
+        let visibleBlocksIndexes = setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously);
+        setInitialBlocksOpacity(blocks, visibleBlocksIndexes);
 
         // SYSTEM ANIMATION
         const SCROLL_DIRECTION_RIGHT = 1,
@@ -253,11 +253,12 @@
 
         let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
             scrollDirection = SCROLL_DIRECTION_LEFT,
-            animationSectionScrolledMax = 0;
+            animationSectionScrolledMaxTracking = 0,
+            animationBlockScrolledTracking = -100;
 
         let animationLoopHandler;
 
-        function setStartTrackBlocks(numberOfTrackedBlockSimultaneously) {
+        function setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously) {
             let result = [];
 
             for (let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
@@ -267,31 +268,32 @@
             return result;
         }
 
-        function setStartBlockOpacity(blocks, visibleBlocksIndexes) {
+        function setInitialBlocksOpacity(blocks, visibleBlocksIndexes) {
             blocks[visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
         }
 
-        function updateTrackBlocks(blocks, currentTrackedBlocks, animationSectionScrolled, animationSectionScrollDirection) {
+        function updateBlocksTrackList(blocks, currentTrackedBlocks, animationSectionScrolled, animationSectionScrollDirection) {
             let _currentTrackedBlocks = [...currentTrackedBlocks],
                 _animationSectionScrolled = Math.abs(animationSectionScrolled),
                 _sizeSectionScrolledTo = 0;
 
             if (animationSectionScrollDirection === ANIMATION_DIRECTION_DOWN) {
-                animationSectionScrolledMax = (animationSectionScrolledMax > _animationSectionScrolled)
-                    ? animationSectionScrolledMax
+                animationSectionScrolledMaxTracking = (animationSectionScrolledMaxTracking > _animationSectionScrolled)
+                    ? animationSectionScrolledMaxTracking
                     : _animationSectionScrolled;
 
                 _sizeSectionScrolledTo = _animationSectionScrolled;
             }
 
             if (animationSectionScrollDirection === ANIMATION_DIRECTION_UP) {
-                _sizeSectionScrolledTo = animationSectionScrolledMax - _animationSectionScrolled;
+                _sizeSectionScrolledTo = animationSectionScrolledMaxTracking - _animationSectionScrolled;
             }
 
             const blockScrolled = Math.floor(_sizeSectionScrolledTo / blockWidth) - 1;
-            if (blockScrolled <= 0) {
+            if (blockScrolled <= 0 || blockScrolled === animationBlockScrolledTracking) {
                 return [..._currentTrackedBlocks];
             }
+            animationBlockScrolledTracking = blockScrolled;
 
             const scrollNormalized = animationSectionScrollDirection * -1,
                 firstTracked = _currentTrackedBlocks[0],
@@ -302,16 +304,16 @@
                 return [..._currentTrackedBlocks];
             }
 
-            return _currentTrackedBlocks.map(index => index + blockScrolled * scrollNormalized);
+            return _currentTrackedBlocks.map(index => index + scrollNormalized);
         }
 
-        function updatedBlockOpacity(blocks, visibleBlocks, animationDirection) {
-            const firstVisibleBlock = visibleBlocks[0];
+        function updatedBlocksOpacity(blocks, visibleBlocks, animationDirection) {
+            const firstVisibleBlock = visibleBlocks[0],
+                currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity;
+            let updatedOpacityFirstBlock = 0;
 
             if (animationDirection === ANIMATION_DIRECTION_DOWN) {
-                let currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity;
-                //console.log(currentOpacityFirstBlock);
-                let updatedOpacityFirstBlock = currentOpacityFirstBlock - CHANGE_OPACITY_SPEED;
+                updatedOpacityFirstBlock = currentOpacityFirstBlock - CHANGE_OPACITY_SPEED;
 
                 if (updatedOpacityFirstBlock < 0) {
                     updatedOpacityFirstBlock = 0;
@@ -320,20 +322,18 @@
                     const nextVisibleBlock = visibleBlocks[1];
                     blocks[nextVisibleBlock].style.opacity = `${DEFAULT_BLOCK_OPACITY}`;
                 }
-
-                blocks[firstVisibleBlock].style.opacity = `${updatedOpacityFirstBlock}`;
             }
 
             if (animationDirection === ANIMATION_DIRECTION_UP) {
-                let currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity;
-                let updatedOpacityFirstBlock = currentOpacityFirstBlock + CHANGE_OPACITY_SPEED;
+                updatedOpacityFirstBlock = currentOpacityFirstBlock + CHANGE_OPACITY_SPEED;
 
                 if (updatedOpacityFirstBlock > FIRST_BLOCK_OPACITY) {
                     updatedOpacityFirstBlock = FIRST_BLOCK_OPACITY;
                 }
 
-                blocks[firstVisibleBlock].style.opacity = `${updatedOpacityFirstBlock}`;
             }
+
+            blocks[firstVisibleBlock].style.opacity = `${updatedOpacityFirstBlock}`;
         }
 
         function proceedAnimation() {
@@ -371,10 +371,9 @@
 
             animationScrolled = sectionAfterScroll;
 
-            visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes, animationScrolled, scrollDirection);
-            console.log('visibleBlocksIndexes', visibleBlocksIndexes);
-
-            updatedBlockOpacity(blocks, visibleBlocksIndexes, scrollDirection);
+            visibleBlocksIndexes = updateBlocksTrackList(blocks, visibleBlocksIndexes, animationScrolled, scrollDirection);
+            console.log(visibleBlocksIndexes);
+            //updatedBlocksOpacity(blocks, visibleBlocksIndexes, scrollDirection);
 
             // Check animation scroll direction
             if (
