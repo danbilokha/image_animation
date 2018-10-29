@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="07f7ad70-0e8d-4a2d-9a30-5480cdf3cb19" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/index.css" afterPath="$PROJECT_DIR$/index.css" />
       <change beforePath="$PROJECT_DIR$/index.js" afterPath="$PROJECT_DIR$/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -79,8 +78,8 @@
           <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="475">
-                  <caret line="323" column="16" lean-forward="true" selection-start-line="323" selection-start-column="16" selection-end-line="323" selection-end-column="16" />
+                <state relative-caret-position="683">
+                  <caret line="278" column="28" lean-forward="false" selection-start-line="278" selection-start-column="28" selection-end-line="278" selection-end-column="28" />
                   <folding>
                     <element signature="e#1215#1733#0" expanded="false" />
                     <element signature="n#!!block;n#changeStyles#0" expanded="false" />
@@ -88,8 +87,7 @@
                     <element signature="n#!!block;n#runAsync#0" expanded="false" />
                     <element signature="n#!!block;n#setDefaultAnimationSettings#0" expanded="false" />
                     <element signature="n#!!block;n#setStartTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-                    <element signature="n#!!block;n#updateTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-                    <element signature="e#12067#12174#0" expanded="false" />
+                    <element signature="e#11522#11629#0" expanded="false" />
                     <element signature="n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
                     <element signature="n#!!block;n#trackElemCoordinatesHistory#0;n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
                     <element signature="n#!!block;n#userScrollHandlerAction#0;n#!!block;n#animationRunner#0" expanded="false" />
@@ -111,7 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setStartSettings</find>
       <find>numberOfTrackedBlockSimultaneously</find>
       <find>`</find>
       <find>setTranslate3d</find>
@@ -129,7 +126,6 @@
       <find>getElemCoordsFromHistory</find>
       <find>scrollDirection</find>
       <find>requestAnimationFrame</find>
-      <find>animationScrolled</find>
       <find>ANIMATION_TRANSLATE_3D_MOVING</find>
       <find>animation__wrapper</find>
       <find>pop</find>
@@ -141,6 +137,8 @@
       <find>visibleBlocksIndexes</find>
       <find>updateTrackBlocks</find>
       <find>block</find>
+      <find>updatedOpacityFirstBlock</find>
+      <find>animationScrolled</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -242,12 +240,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1540647471232</updated>
-      <workItem from="1540647472512" duration="50120000" />
+      <workItem from="1540647472512" duration="50808000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50120000" />
+    <option name="totallyTimeSpent" value="50808000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1060" extended-state="6" />
@@ -344,8 +342,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="323" column="16" lean-forward="true" selection-start-line="323" selection-start-column="16" selection-end-line="323" selection-end-column="16" />
+        <state relative-caret-position="683">
+          <caret line="278" column="28" lean-forward="false" selection-start-line="278" selection-start-column="28" selection-end-line="278" selection-end-column="28" />
           <folding>
             <element signature="e#1215#1733#0" expanded="false" />
             <element signature="n#!!block;n#changeStyles#0" expanded="false" />
@@ -353,8 +351,7 @@
             <element signature="n#!!block;n#runAsync#0" expanded="false" />
             <element signature="n#!!block;n#setDefaultAnimationSettings#0" expanded="false" />
             <element signature="n#!!block;n#setStartTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-            <element signature="n#!!block;n#updateTrackBlocks#0;n#!!block;n#animationRunner#0" expanded="false" />
-            <element signature="e#12067#12174#0" expanded="false" />
+            <element signature="e#11522#11629#0" expanded="false" />
             <element signature="n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
             <element signature="n#!!block;n#trackElemCoordinatesHistory#0;n#!!block;n#animatePicturesMoving#0;n#!!block;n#animationRunner#0" expanded="false" />
             <element signature="n#!!block;n#userScrollHandlerAction#0;n#!!block;n#animationRunner#0" expanded="false" />

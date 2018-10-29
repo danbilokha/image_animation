@@ -258,10 +258,9 @@ function animationRunner() {
 
     function setStartBlockOpacity(blocks, visibleBlocksIndexes) {
         blocks[visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
-        blocks[visibleBlocksIndexes[visibleBlocksIndexes.length - 1]].style.opacity = LAST_BLOCK_OPACITY;
     }
 
-    function updateTrackBlocks(blocks, currentTracked) {
+    function updateTrackBlocks(blocks, currentTracked, animationScrolled) {
         let currentTrackedBlocks = [...currentTracked];
 
         const firstTrackBlock = currentTrackedBlocks.splice(0, 1)[0],
@@ -269,6 +268,8 @@ function animationRunner() {
 
         const firstBlockX = blocks[firstTrackBlock].getBoundingClientRect().x,
             lastBlockX = blocks[lastTrackBlock].getBoundingClientRect().x;
+
+        console.log(animationScrolled / blockWidth, Math.floor(animationScrolled / blockWidth));
 
         // TODO: CHECK IT OUT - BUGS!
         if ((Math.abs(firstBlockX) - blockWidth) > blockWidth) {
@@ -296,40 +297,32 @@ function animationRunner() {
     }
 
     function updatedBlockOpacity(blocks, visibleBlocks, animationDirection) {
-        const firstVisibleBlock = visibleBlocks[0],
-            lastVisibleBlock = visibleBlocks[visibleBlocks.length - 1];
+        const firstVisibleBlock = visibleBlocks[0];
 
         if (animationDirection === ANIMATION_DIRECTION_DOWN) {
-            const currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity,
-                currentOpacityLastBlock = +blocks[lastVisibleBlock].style.opacity;
-
-            let updatedOpacityFirstBlock = currentOpacityFirstBlock - CHANGE_OPACITY_SPEED,
-                updatedOpacityLastBlock = currentOpacityLastBlock + CHANGE_OPACITY_SPEED;
+            const currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity;
+            let updatedOpacityFirstBlock = currentOpacityFirstBlock - CHANGE_OPACITY_SPEED;
 
             if (updatedOpacityFirstBlock < 0) {
                 updatedOpacityFirstBlock = 0;
             }
 
-            if (updatedOpacityLastBlock > 1) {
-                updatedOpacityLastBlock = 1;
-            }
-
             blocks[firstVisibleBlock].style.opacity = `${updatedOpacityFirstBlock}`;
-            blocks[lastVisibleBlock].style.opacity = `${updatedOpacityLastBlock}`;
         }
 
         if (animationDirection === ANIMATION_DIRECTION_UP) {
-            const currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity,
-                updatedOpacityFirstBlock = currentOpacityFirstBlock + CHANGE_OPACITY_SPEED,
-                currentOpacityLastBlock = +blocks[lastVisibleBlock].style.opacity,
-                updatedOpacityLastBlock = currentOpacityLastBlock - CHANGE_OPACITY_SPEED;
+            const currentOpacityFirstBlock = +blocks[firstVisibleBlock].style.opacity;
+            let updatedOpacityFirstBlock = currentOpacityFirstBlock + CHANGE_OPACITY_SPEED;
+
+            if (updatedOpacityFirstBlock > FIRST_BLOCK_OPACITY) {
+                updatedOpacityFirstBlock = FIRST_BLOCK_OPACITY;
+            }
 
             blocks[firstVisibleBlock].style.opacity = `${updatedOpacityFirstBlock}`;
-            blocks[lastVisibleBlock].style.opacity = `${updatedOpacityLastBlock}`;
         }
     }
 
-    function proceedAnimation(timestamp) {
+    function proceedAnimation() {
         const animationCurrentTime = new Date(),
             fps = animationCurrentTime - animationPrevTime;
         // In order do not proceed animation too often
@@ -351,7 +344,7 @@ function animationRunner() {
 
         animatePicturesMoving(blocks, visibleBlocksIndexes, scrollDirection);
 
-        visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes);
+        visibleBlocksIndexes = updateTrackBlocks(blocks, visibleBlocksIndexes, animationScrolled);
         updatedBlockOpacity(blocks, visibleBlocksIndexes, scrollDirection);
         console.log(visibleBlocksIndexes);
 
