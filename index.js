@@ -20,16 +20,24 @@
         ============================================================
      */
 
-    document.addEventListener('DOMContentLoaded', proceedExecution);
+    let cancelAnimationFrameCallback,
+        proceedAnimationFn;
+
+    document.addEventListener('DOMContentLoaded', run);
+    window.addEventListener('resize', run);
 
     /*
         ============================================================
                                 CHANGEABLE OPTIONS
         ============================================================
      */
+    // NO CHANGABLE
     const ANIMATION_DIRECTION_UP = 1,
         ANIMATION_DIRECTION_DOWN = -1,
         DEFAULT_TRANSLATE_3D_MAX_VALUE = 5,
+        SCROLL_DIRECTION_RIGHT = 1,
+        SCROLL_DIRECTION_LEFT = -1,
+        ANIMATION_DEFAULT_SCROLLED = 0,
         // NO CHANGABLE
         PICTURE_DIMENSION_VALUE = 0,
         SHADOW_DIMENSION_VALUE = -1,
@@ -61,6 +69,16 @@
         CALCULATION_SALT = 3,
         ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
 
+    function run() {
+        if (!!cancelAnimationFrameCallback) {
+            window.cancelAnimationFrame(cancelAnimationFrameCallback);
+        }
+
+        window.removeEventListener('scroll', userScrolling);
+
+        proceedExecution();
+    }
+
     function proceedExecution() {
         // UNCOMMENT NEXT FUNCTION IF ANIMATION SHOULD PLAY ONLY AT SCROLLING
         /*runAsync(
@@ -74,6 +92,7 @@
         );*/
 
         animation();
+        window.addEventListener('scroll', userScrolling);
     }
 
     /*
@@ -111,6 +130,8 @@
     function setUniqueId(elem, ...hash) {
         const _hash = hash.join('|');
         elem.id = _hash;
+
+        return _hash;
     }
 
     function getTranslate3dValues(cssTextStyleValue) {
@@ -120,6 +141,14 @@
             z = cssText[2].slice(0, -3);
 
         return {x, y, z};
+    }
+
+    function setTranslate3d(elem, tx, ty, tz) {
+        let x = tx + UNIT_TRANSLATE_3D_X,
+            y = ty + UNIT_TRANSLATE_3D_Y,
+            z = tz + UNIT_TRANSLATE_3D_Z;
+
+        elem.style.transform = `translate3d(${x}, ${y}, ${z})`;
     }
 
     /*
@@ -153,6 +182,12 @@
     function runAsync(fn, ...param) {
         setTimeout(() => fn(...param), 0);
     }
+
+    /*
+        Animation state variables
+     */
+    const defaultElementsPositions = {};
+    let scrollDirection = SCROLL_DIRECTION_LEFT;
 
     function animation() {
         setDefaultAnimationSettings();
@@ -201,30 +236,44 @@
 
                 setTranslate3d(
                     picture,
-                    picture_x, //Math.random() * TRANSLATE_3D_MAX_VALUE * isFloating,
-                    picture_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE * isFloating,
+                    picture_x,
+                    picture_y,
                     PICTURE_DIMENSION_VALUE
                 );
-                setUniqueId(picture, picture_x.toString(), picture_y.toString(), PICTURE_DIMENSION_VALUE.toString());
+                const pictureUniqueId = setUniqueId(
+                    picture, picture_x.toString(), picture_y.toString(), PICTURE_DIMENSION_VALUE.toString()
+                );
+                saveInitialAnimationSettings(pictureUniqueId, picture_x, picture_y, PICTURE_DIMENSION_VALUE);
 
                 setTranslate3d(
                     shadow,
-                    shadow_x, //Math.random() * TRANSLATE_3D_MAX_VALUE,
-                    shadow_y, //Math.random() * TRANSLATE_3D_MAX_Y_VALUE,
+                    shadow_x,
+                    shadow_y,
                     SHADOW_DIMENSION_VALUE
                 );
-                setUniqueId(shadow, shadow_x.toString(), shadow_y.toString(), SHADOW_DIMENSION_VALUE.toString());
+                const shadowUniqueId = setUniqueId(
+                    shadow, shadow_x.toString(), shadow_y.toString(), SHADOW_DIMENSION_VALUE.toString()
+                );
+                saveInitialAnimationSettings(shadowUniqueId, shadow_x, shadow_y, SHADOW_DIMENSION_VALUE);
 
                 isFloating *= -1;
             }
         }
+    }
 
-        function setTranslate3d(elem, tx, ty, tz) {
-            let x = tx + UNIT_TRANSLATE_3D_X,
-                y = ty + UNIT_TRANSLATE_3D_Y,
-                z = tz + UNIT_TRANSLATE_3D_Z;
+    function saveInitialAnimationSettings(elementUniqueId, x, y, z) {
+        defaultElementsPositions[elementUniqueId] = {x, y, z};
+    }
 
-            elem.style.transform = `translate3d(${x}, ${y}, ${z})`;
+    function restoreInitialAnimationSettings() {
+        for (let elemId in defaultElementsPositions) {
+            const elem = document.getElementById(elemId);
+            setTranslate3d(
+                elem,
+                defaultElementsPositions[elemId].x,
+                defaultElementsPositions[elemId].y,
+                defaultElementsPositions[elemId].z,
+            );
         }
     }
 
@@ -247,10 +296,7 @@
         setInitialBlocksOpacity(blocks, visibleBlocksIndexes);
 
         // SYSTEM ANIMATION
-        const SCROLL_DIRECTION_RIGHT = 1,
-            SCROLL_DIRECTION_LEFT = -1,
-            ANIMATION_DEFAULT_SCROLLED = 0,
-            elementPositions = {};
+        const elementPositions = {};
 
         // SYSTEM ANIMATION SETTINGS
         let animationStart = new Date(),
@@ -258,11 +304,8 @@
             isFirstAnimationRun = true;
 
         let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
-            scrollDirection = SCROLL_DIRECTION_LEFT,
             animationSectionScrolledMaxTracking = 0,
             animationBlockScrolledTracking = -100;
-
-        let animationLoopHandler;
 
         function setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously) {
             let result = [];
@@ -318,8 +361,6 @@
         let opacityHelper_TrackedPrevBlocks = [];
         // TODO: Improve
         function updatedBlocksOpacity(blocks, currentTrackedBlocks, animationSectionScrollDirection) {
-            console.log(currentTrackedBlocks);
-
             // ELEMENT, which no longer seeing
             if(!!opacityHelper_TrackedPrevBlocks[0] && opacityHelper_TrackedPrevBlocks[0] !== currentTrackedBlocks[0]) {
                 blocks[opacityHelper_TrackedPrevBlocks[0]].style.opacity = NO_OPACITY;
@@ -381,13 +422,13 @@
             opacityHelper_TrackedPrevBlocks = currentTrackedBlocks;
         }
 
-        function proceedAnimation() {
+        proceedAnimationFn = function proceedAnimation() {
             const animationCurrentTime = new Date(),
                 fps = animationCurrentTime - animationPrevTime;
 
             // In order do not proceed animation too often
             if (fps < SCROLL_FPS && !isFirstAnimationRun) {
-                animationLoopHandler = requestAnimationFrame(proceedAnimation);
+                cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
                 return;
             } else {
                 isFirstAnimationRun = false;
@@ -428,14 +469,19 @@
                 scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
+
+                // RESTORE default elements position
+                if (scrollDirection === SCROLL_DIRECTION_LEFT) {
+                    requestAnimationFrame(restoreInitialAnimationSettings);
+                }
             }
 
             /*
                 Finish animation
              */
             animationPrevTime = new Date();
-            animationLoopHandler = requestAnimationFrame(proceedAnimation);
-        }
+            cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
+        };
 
         function proceedPictureMoving(blocks, trackedBlocksIndexes, direction) {
             trackedBlocksIndexes.forEach((index) => {
@@ -517,50 +563,46 @@
             }
         }
 
-        /*
-            USER INTERACTING WITH WEB PAGE
-         */
-        function userScrollHandlerAction() {
-            let timeOutId,
-                userPrevTop = (window.pageYOffset !== undefined)
-                    ? window.pageYOffset
-                    : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-
-            function userScrolling() {
-                const userCurrTop = (window.pageYOffset !== undefined)
-                    ? window.pageYOffset
-                    : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-
-                // CLEAR PREV ANIMATION RUNNERS
-                clearTimeout(timeOutId);
-                window.cancelAnimationFrame(animationLoopHandler);
-
-                TRANSLATE_3D_MAX_VALUE = 15;
-                ANIMATION_SCROLL_STEP = 400;
-                if (userCurrTop < userPrevTop) {
-                    console.log('up'); // TODO: DEL
-                    scrollDirection = ANIMATION_DIRECTION_UP;
-                    proceedAnimation();
-                } else {
-                    console.log('down'); // TODO: DEL
-                    scrollDirection = ANIMATION_DIRECTION_DOWN;
-                    proceedAnimation();
-                }
-                userPrevTop = userCurrTop;
-
-                timeOutId = setTimeout(() => {
-                    TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;
-                    ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
-                    animationLoopHandler = requestAnimationFrame(proceedAnimation);
-                }, 1500);
-            }
-
-            window.addEventListener('scroll', userScrolling);
-        }
-
-        //userScrollHandlerAction();
-
         // Start first automatic animation
-        animationLoopHandler = requestAnimationFrame(proceedAnimation);
+        cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+    }
+
+    /*
+        ============================================================
+                    USER SCROLLING
+        ============================================================
+    */
+    let timeOutId,
+        userPrevTop = (!!window.pageYOffset)
+            ? window.pageYOffset
+            : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+    function userScrolling() {
+        const userCurrTop = (!!window.pageYOffset)
+            ? window.pageYOffset
+            : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
+        // CLEAR PREV ANIMATION RUNNERS
+        clearTimeout(timeOutId);
+        window.cancelAnimationFrame(cancelAnimationFrameCallback);
+
+        TRANSLATE_3D_MAX_VALUE = 50;
+        ANIMATION_SCROLL_STEP = 800;
+        if (userCurrTop < userPrevTop) {
+            console.log('up'); // TODO: DEL
+            scrollDirection = ANIMATION_DIRECTION_UP;
+            cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+        } else {
+            console.log('down'); // TODO: DEL
+            scrollDirection = ANIMATION_DIRECTION_DOWN;
+            cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+        }
+        userPrevTop = userCurrTop;
+
+        timeOutId = setTimeout(() => {
+            TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;
+            ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
+            cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+        }, 1500);
     }
 })();
