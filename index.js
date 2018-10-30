@@ -3,13 +3,15 @@
 const settings = {
     SET_FULL_ANIMATION_HEIGHT: false, // set height, which animation section has
     DEFAULT_FIRST_BLOCK_OPACITY: '0.6',
-    DEFAULT_SECOND_BLOCK_OPACITY: '0.9',
+    DEFAULT_SECOND_BLOCK_OPACITY: '0.8',
+    DEFAULT_THIRD_BLOCK_OPACITY: '0.9',
     CHANGE_OPACITY_SPEED: 0.1,
     CHANGE_OPACITY_SPEED_INCREASED: 0.2,
     SCROLL_FPS: 2000,
+    DEFAULT_TRANSLATE_3D_INITIAL_VALUE: 3,
     DEFAULT_TRANSLATE_3D_MAX_VALUE: 5,
-    DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
-    DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 1, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
+    DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 4, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
+    DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 0.5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
     DEFAULT_ANIMATION_SCROLL_STEP: 200, // Section moving
     CALCULATION_SALT: 2, // Better not to change
     // better to leave it as is
@@ -64,6 +66,7 @@ const settings = {
         // These settings might have impact on performance
         SET_FULL_ANIMATION_HEIGHT = settings.SET_FULL_ANIMATION_HEIGHT || false,
         SCROLL_FPS = settings.SCROLL_FPS || 2000,
+        DEFAULT_TRANSLATE_3D_INITIAL_VALUE = settings.DEFAULT_TRANSLATE_3D_INITIAL_VALUE || 5,
         DEFAULT_TRANSLATE_3D_MAX_VALUE = settings.DEFAULT_TRANSLATE_3D_MAX_VALUE || 5, // HOW WIDELY ANIMATION COULD BE SPRAYED
         DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER = settings.DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER || 5,
         DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM = settings.DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM || 1,
@@ -72,9 +75,11 @@ const settings = {
         CHANGE_OPACITY_SPEED = settings.CHANGE_OPACITY_SPEED || 0.1,
         CHANGE_OPACITY_SPEED_INCREASED = settings.CHANGE_OPACITY_SPEED_INCREASED || 0.2,
         DEFAULT_FIRST_BLOCK_OPACITY = settings.DEFAULT_FIRST_BLOCK_OPACITY || '0.6',
-        DEFAULT_SECOND_BLOCK_OPACITY = settings.DEFAULT_SECOND_BLOCK_OPACITY || '0.9',
+        DEFAULT_SECOND_BLOCK_OPACITY = settings.DEFAULT_SECOND_BLOCK_OPACITY || '0.8',
+        DEFAULT_THIRD_BLOCK_OPACITY = settings.DEFAULT_THIRD_BLOCK_OPACITY || '0.9',
         FIRST_BLOCK_OPACITY = DEFAULT_FIRST_BLOCK_OPACITY,
         SECOND_BLOCK_OPACITY = DEFAULT_SECOND_BLOCK_OPACITY,
+        THIRD_BLOCK_OPACITY = DEFAULT_THIRD_BLOCK_OPACITY,
         CALCULATION_SALT = settings.CALCULATION_SALT || 2;
 
     /*
@@ -82,7 +87,7 @@ const settings = {
                                 NOT CHANGEABLE OPTIONS
         ============================================================
      */
-    let TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE,
+    let TRANSLATE_3D_INITIAL_VALUE = DEFAULT_TRANSLATE_3D_INITIAL_VALUE,
         ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
         ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
 
@@ -265,6 +270,7 @@ const settings = {
 
         blocks[_visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
         blocks[_visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
+        blocks[_visibleBlocksIndexes[2]].style.opacity = THIRD_BLOCK_OPACITY;
 
         for (let i = 2; i < _visibleBlocksIndexes.length; i += 1) {
             blocks[i].style.opacity = FULL_OPACITY;
@@ -311,7 +317,7 @@ const settings = {
             for (let i = 0; i < foundedPicturesLen; i += 1) {
                 const pictureDOM = picturesDOM[i],
                     shadowDOM = shadowsDOM[i],
-                    shadow_x = Math.random() * TRANSLATE_3D_MAX_VALUE,
+                    shadow_x = Math.random() * TRANSLATE_3D_INITIAL_VALUE,
                     shadow_y = shadow_x + (Math.random() * CALCULATION_SALT),
                     picture_x = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating,
                     picture_y = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating;
