@@ -39,10 +39,10 @@
         UNIT_TRANSLATE_3D_X = 'vw',
         UNIT_TRANSLATE_3D_Y = 'vh',
         UNIT_TRANSLATE_3D_Z = 'px',
-        COUNT_OF_BLOCK_ADDITIONAL_TRACK = 1,
+        COUNT_OF_BLOCK_ADDITIONAL_TRACK = 2,
         NO_OPACITY = 0,
         FULL_OPACITY = 1,
-        MAX_TRANSLATE_VALUE = 20,
+        MAX_TRANSLATE_VALUE = 10,
         // MIGHT BE CHANGED IN ORDER TO FIND BEST EXPERIENCE
         // These settings might have impact on performance
         TIME_TO_WAIT_BEFORE_START_ANIMATION = 1000,
@@ -50,7 +50,7 @@
         DEFAULT_ANIMATION_TRANSLATE_3D_MOVING = 1,
         DEFAULT_ANIMATION_SCROLL_STEP = 200,
         // OPTION: opacity - BETTER not change
-        DEFAULT_FIRST_BLOCK_OPACITY = '0.5',
+        DEFAULT_FIRST_BLOCK_OPACITY = '0.6',
         DEFAULT_SECOND_BLOCK_OPACITY = '0.9',
         FIRST_BLOCK_OPACITY = DEFAULT_FIRST_BLOCK_OPACITY,
         SECOND_BLOCK_OPACITY = DEFAULT_SECOND_BLOCK_OPACITY,
@@ -229,11 +229,28 @@
     }
 
     function animation() {
-        setDefaultAnimationPicturesAndShadowsSettings();
+        setInitialAnimationPicturesAndShadowsSettings();
         animationRunner();
     }
 
-    function setDefaultAnimationPicturesAndShadowsSettings() {
+    function setInitialBlocksOpacity(blocks = animationBlocksDOM, visibleBlocksIndexes) {
+        let _visibleBlocksIndexes = visibleBlocksIndexes;
+        if (typeof _visibleBlocksIndexes === 'number') {
+            _visibleBlocksIndexes = [];
+            for (let i = 0; i < visibleBlocksIndexes; i += 1) {
+                _visibleBlocksIndexes.push(i);
+            }
+        }
+
+        blocks[_visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
+        blocks[_visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
+
+        for (let i = 2; i < _visibleBlocksIndexes.length; i += 1) {
+            blocks[i].style.opacity = FULL_OPACITY;
+        }
+    }
+
+    function setInitialAnimationPicturesAndShadowsSettings() {
         let blocks = document.getElementsByClassName('block'),
             foundedBlocks = blocks.length;
 
@@ -358,11 +375,6 @@
             return result;
         }
 
-        function setInitialBlocksOpacity(blocks, visibleBlocksIndexes) {
-            blocks[visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
-            blocks[visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
-        }
-
         function updateBlocksTrackList(blocks, currentTrackedBlocks, animationSectionScrolled, animationSectionScrollDirection) {
             let _currentTrackedBlocks = [...currentTrackedBlocks],
                 _animationSectionScrolled = Math.abs(animationSectionScrolled),
@@ -462,6 +474,7 @@
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
 
+                setInitialBlocksOpacity(animationBlocksDOM, visibleBlocksIndexes);
                 proceedRestoringInitialElementsSettings();
             }
 
@@ -513,10 +526,7 @@
 
             changeOpacity(blockFirstDOM, opacityChangeSpeed1, animationSectionScrollDirection);
             const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
-            if (!!nextBlockAfterTracked) {
-                console.log('change opacity');
-                changeOpacity(blockSecondDOM, opacityChangeSpeed2, animationSectionScrollDirection);
-            };
+            changeOpacity(blockSecondDOM, opacityChangeSpeed2, animationSectionScrollDirection);
 
             function animateElementTranslate3d(elemDOM, direction, sign, salt) {
                 const _elemDOM = elemDOM,
@@ -579,8 +589,10 @@
         }
         userPrevTop = userCurrTop;
         setUserScrollTransitions();
-        cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
 
+        setInitialBlocksOpacity(animationBlocksDOM, animationBlocksDOM.length - 1);
+
+        cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
         timeOutId = setTimeout(() => {
             ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING;
             ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
