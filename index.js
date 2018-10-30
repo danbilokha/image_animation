@@ -469,7 +469,6 @@
                 Math.abs(animationScrolled) > animationToBeScrolled
                 || animationScrolled === ANIMATION_DEFAULT_SCROLLED
             ) {
-                //console.info('animation direction scroll finished. Change direction');
                 scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
@@ -550,7 +549,6 @@
 
         function proceedRestoringInitialElementsSettings() {
             // RESTORE default elements position
-            console.log('proceedRestoringInitialElementsSettings');
             window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback);
             restoreInitialAnimationSettings();
         }
@@ -581,10 +579,8 @@
         ANIMATION_SCROLL_STEP = 1000;
         ANIMATION_TRANSLATE_3D_MOVING = 5;
         if (userCurrTop < userPrevTop) {
-            console.log('up'); // TODO: DEL
             scrollDirection = ANIMATION_DIRECTION_UP;
         } else {
-            console.log('down'); // TODO: DEL
             scrollDirection = ANIMATION_DIRECTION_DOWN;
         }
         userPrevTop = userCurrTop;
