@@ -92,6 +92,10 @@ body {
     will-change: transform;
 }
 
+.picture__user-scroll {
+    transition: 0.5s;
+}
+
 .shadow {
     position: absolute;
     left: 0;

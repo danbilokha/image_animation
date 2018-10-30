@@ -71,7 +71,8 @@
 
     // DOM ELEMENTS
     const animationSectionDOM = document.getElementsByClassName('section')[0],
-        animationBlocksDOM = document.getElementsByClassName('block');
+        animationBlocksDOM = document.getElementsByClassName('block'),
+        animationPicturesDOM = document.getElementsByClassName('picture');
 
     /*
         Animation state variables
@@ -646,6 +647,11 @@
         for(let i = 0; i < animationBlocksDOMLen; i += 1) {
             animationBlocksDOM[i].classList.add('block__user-scroll')
         }
+
+        const animationPicturesDOMLen = animationPicturesDOM.length;
+        for(let i = 0; i < animationPicturesDOMLen; i += 1) {
+            animationPicturesDOM[i].classList.add('picture__user-scroll')
+        }
     }
     
     function removeUserScrollTransitions() {
@@ -654,6 +660,11 @@
         const animationBlocksDOMLen = animationBlocksDOM.length;
         for(let i = 0; i < animationBlocksDOMLen; i += 1) {
             animationBlocksDOM[i].classList.remove('block__user-scroll')
+        }
+
+        const animationPicturesDOMLen = animationPicturesDOM.length;
+        for(let i = 0; i < animationPicturesDOMLen; i += 1) {
+            animationPicturesDOM[i].classList.remove('picture__user-scroll')
         }
     }
 })();
