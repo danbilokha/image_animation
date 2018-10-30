@@ -21,6 +21,7 @@
      */
 
     let cancelAnimationFrameCallback,
+        cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback,
         proceedAnimationFn;
 
     document.addEventListener('DOMContentLoaded', run);
@@ -49,6 +50,7 @@
         FULL_OPACITY = 1,
         // MIGHT BE CHANGED IN ORDER TO FIND BEST EXPERIENCE
         // These settings might have impact on performance
+        TIME_TO_WAIT_BEFORE_START_ANIMATION = 1000,
         SCROLL_FPS = 1000,
         ANIMATION_TRANSLATE_3D_MOVING = 1,
         DEFAULT_ANIMATION_SCROLL_STEP = 200,
@@ -301,7 +303,8 @@
         // SYSTEM ANIMATION SETTINGS
         let animationStart = new Date(),
             animationPrevTime = animationStart,
-            isFirstAnimationRun = true;
+            isFirstAnimationRun = true,
+            sectionBordersTimeout;
 
         let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
             animationSectionScrolledMaxTracking = 0,
@@ -424,14 +427,32 @@
 
         proceedAnimationFn = function proceedAnimation() {
             const animationCurrentTime = new Date(),
-                fps = animationCurrentTime - animationPrevTime;
+                fps = animationCurrentTime - animationPrevTime,
+                sectionAfterScroll = animationScrolled + (ANIMATION_SCROLL_STEP * scrollDirection);
 
             // In order do not proceed animation too often
             if (fps < SCROLL_FPS && !isFirstAnimationRun) {
+                window.cancelAnimationFrame(cancelAnimationFrameCallback);
                 cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
                 return;
             } else {
                 isFirstAnimationRun = false;
+            }
+
+            // Check, that section is moving in right frames
+            if (sectionAfterScroll > 0 || Math.abs(sectionAfterScroll) > animationToBeScrolled) {
+                scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
+                    ? SCROLL_DIRECTION_RIGHT
+                    : SCROLL_DIRECTION_LEFT;
+
+                clearTimeout(sectionBordersTimeout);
+                sectionBordersTimeout = setTimeout(() => {
+                    proceedRestoringInitialElementsSettings();
+                    window.cancelAnimationFrame(cancelAnimationFrameCallback);
+                    cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
+                }, SCROLL_FPS);
+
+                return;
             }
 
             /*
@@ -452,7 +473,6 @@
                                     Section moving animation
                 ============================================================
              */
-            const sectionAfterScroll = animationScrolled + (ANIMATION_SCROLL_STEP * scrollDirection);
             animationSection.style.left = sectionAfterScroll + 'px';
 
             animationScrolled = sectionAfterScroll;
@@ -470,16 +490,14 @@
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
 
-                // RESTORE default elements position
-                if (scrollDirection === SCROLL_DIRECTION_LEFT) {
-                    requestAnimationFrame(restoreInitialAnimationSettings);
-                }
+                proceedRestoringInitialElementsSettings();
             }
 
             /*
                 Finish animation
              */
             animationPrevTime = new Date();
+            window.cancelAnimationFrame(cancelAnimationFrameCallback);
             cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
         };
 
@@ -563,6 +581,13 @@
             }
         }
 
+        function proceedRestoringInitialElementsSettings() {
+
+            // RESTORE default elements position
+            window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback);
+            cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback = requestAnimationFrame(restoreInitialAnimationSettings);
+        }
+
         // Start first automatic animation
         cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
     }
@@ -602,6 +627,7 @@
         timeOutId = setTimeout(() => {
             TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;
             ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
+            window.cancelAnimationFrame(cancelAnimationFrameCallback);
             cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
         }, 1500);
     }
