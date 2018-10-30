@@ -45,8 +45,8 @@
         // MIGHT BE CHANGED IN ORDER TO FIND BEST EXPERIENCE
         // These settings might have impact on performance
         TIME_TO_WAIT_BEFORE_START_ANIMATION = 1000,
-        SCROLL_FPS = 1000,
-        ANIMATION_TRANSLATE_3D_MOVING = 1,
+        SCROLL_FPS = 1500,
+        DEFAULT_ANIMATION_TRANSLATE_3D_MOVING = 1,
         DEFAULT_ANIMATION_SCROLL_STEP = 200,
         // OPTION: opacity - BETTER not change
         DEFAULT_FIRST_BLOCK_OPACITY = '0.5',
@@ -62,8 +62,9 @@
         ============================================================
      */
     let TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE,
-        CALCULATION_SALT = 3,
-        ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
+        CALCULATION_SALT = 2,
+        ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
+        ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING;
 
     let cancelAnimationFrameCallback,
         cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback,
@@ -153,8 +154,13 @@
     }
 
     function getTranslate3dValues(cssTextStyleValue) {
-        const cssText = cssTextStyleValue.split(','),
-            x = cssText[0].split('(')[1].slice(0, -2),
+        const cssText = cssTextStyleValue.split(',');
+
+        if (!cssText[0] || !cssText[0].length) {
+            return {x: 0, y: 0, z: 0}
+        }
+
+        const x = cssText[0].split('(')[1].slice(0, -2),
             y = cssText[1].slice(0, -2),
             z = cssText[2].slice(0, -3);
 
@@ -202,69 +208,74 @@
     }
 
     function animation() {
-        setDefaultAnimationSettings();
+        setDefaultAnimationPicturesAndShadowsSettings();
         animationRunner();
     }
 
-    function setDefaultAnimationSettings() {
+    function setDefaultAnimationPicturesAndShadowsSettings() {
         let blocks = document.getElementsByClassName('block'),
             foundedBlocks = blocks.length;
 
         for (let i = 0; i < foundedBlocks; i += 1) {
-            let blockRowFirst = blocks[i].getElementsByClassName('row-first'),
-                foundedRowsFirst = blockRowFirst.length,
-                blockRowSecond = blocks[i].getElementsByClassName('row-second'),
-                foundedRowsSecond = blockRowSecond.length;
+            let blockRowFirstDOM = blocks[i].getElementsByClassName('row-first'),
+                foundedRowsFirst = blockRowFirstDOM.length,
+                blockRowSecondDOM = blocks[i].getElementsByClassName('row-second'),
+                foundedRowsSecond = blockRowSecondDOM.length,
+                blockDOM = blocks[i];
 
-            // set default translate3d synchronously
-            setRow(blockRowFirst[0], ANIMATION_DIRECTION_DOWN);
-            setRow(blockRowSecond[0], ANIMATION_DIRECTION_UP);
+            // (SET): DEFAULT translate3d synchronously
+            setRow(blockRowFirstDOM[0], ANIMATION_DIRECTION_DOWN);
+            setRow(blockRowSecondDOM[0], ANIMATION_DIRECTION_UP);
 
-            if (foundedRowsFirst > 1 || blockRowSecond > 1) {
-                // set default translate3d asynchronously starting from the second block
+            if (foundedRowsFirst > 1 || blockRowSecondDOM > 1) {
+                // (SET): DEFAULT translate3d asynchronously starting from the second block
                 for (let j = 1; j < foundedRowsFirst || foundedRowsSecond; j += 1) {
-                    runAsync(setRow, blockRowFirst[j], ANIMATION_DIRECTION_DOWN);
-                    runAsync(setRow, blockRowSecond[j], ANIMATION_DIRECTION_UP);
+                    runAsync(setRow, blockRowFirstDOM[j], ANIMATION_DIRECTION_DOWN);
+                    runAsync(setRow, blockRowSecondDOM[j], ANIMATION_DIRECTION_UP);
                 }
             }
+
+            // (SET): DEFAULT blocks transition
+            const blockDOMUniqueId = setUniqueId(blockDOM, Math.random(), Math.random(), Math.random());
+            saveInitialAnimationSettings(blockDOMUniqueId, 0, 0, 0);
         }
 
         function setRow(rowElem, order = ANIMATION_DIRECTION_DOWN) {
-            let pictures = rowElem.getElementsByClassName('picture'),
-                foundedPicturesLen = pictures.length,
-                shadows = rowElem.getElementsByClassName('shadow'),
+            let picturesDOM = rowElem.getElementsByClassName('picture'),
+                foundedPicturesLen = picturesDOM.length,
+                shadowsDOM = rowElem.getElementsByClassName('shadow'),
                 //foundedShadowsLen = shadows.length,
                 isFloating = (order === ANIMATION_DIRECTION_DOWN) ? -1 : 1;
 
-            // Use foundedPicturesLen here because count of pictures is equal to
+            // Use foundedPicturesLen here because count of picturesDOM is equal to
             // count of shadows
             for (let i = 0; i < foundedPicturesLen; i += 1) {
-                const picture = pictures[i],
-                    shadow = shadows[i],
+                const pictureDOM = picturesDOM[i],
+                    shadowDOM = shadowsDOM[i],
                     shadow_x = Math.random() * TRANSLATE_3D_MAX_VALUE,
                     shadow_y = shadow_x + (Math.random() * CALCULATION_SALT),
                     picture_x = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating,
                     picture_y = (shadow_x + (Math.random() * CALCULATION_SALT)) * isFloating;
 
                 setTranslate3d(
-                    picture,
+                    pictureDOM,
                     picture_x,
                     picture_y,
                     PICTURE_DIMENSION_VALUE
                 );
                 const pictureUniqueId = setUniqueId(
-                    picture, picture_x.toString(), picture_y.toString(), PICTURE_DIMENSION_VALUE.toString()
+                    pictureDOM, picture_x.toString(), picture_y.toString(), PICTURE_DIMENSION_VALUE.toString()
                 );
                 saveInitialAnimationSettings(pictureUniqueId, picture_x, picture_y, PICTURE_DIMENSION_VALUE);
 
                 setTranslate3d(
-                    shadow,
+                    shadowDOM,
                     shadow_x,
                     shadow_y,
                     SHADOW_DIMENSION_VALUE
                 );
                 const shadowUniqueId = setUniqueId(
-                    shadow, shadow_x.toString(), shadow_y.toString(), SHADOW_DIMENSION_VALUE.toString()
+                    shadowDOM, shadow_x.toString(), shadow_y.toString(), SHADOW_DIMENSION_VALUE.toString()
                 );
                 saveInitialAnimationSettings(shadowUniqueId, shadow_x, shadow_y, SHADOW_DIMENSION_VALUE);
 
@@ -304,7 +315,7 @@
         setInitialBlocksOpacity(animationBlocksDOM, visibleBlocksIndexes);
 
         // SYSTEM ANIMATION
-        const elementPositions = {};
+        //const elementPositions = {};
 
         // SYSTEM ANIMATION SETTINGS
         let animationStart = new Date(),
@@ -472,7 +483,7 @@
                                     Picture moving animation
                 ============================================================
              */
-            proceedPictureMoving(animationBlocksDOM, visibleBlocksIndexes, scrollDirection);
+            proceedAnimationMoving(animationBlocksDOM, visibleBlocksIndexes, scrollDirection);
 
             /*
                 ============================================================
@@ -507,91 +518,57 @@
             cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
         };
 
-        function proceedPictureMoving(blocks, trackedBlocksIndexes, direction) {
+        function proceedAnimationMoving(blocksDOM, trackedBlocksIndexes, direction) {
             trackedBlocksIndexes.forEach((index) => {
-                const blockPictures = blocks[index].getElementsByClassName('picture'),
-                    blockPicturesLen = blockPictures.length,
-                    blockShadows = blocks[index].getElementsByClassName('shadow'),
-                    blockShadowsLen = blockShadows.length;
+                const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
+                    blockPicturesLen = blockPicturesDOM.length,
+                    blockShadowsDOM = blocksDOM[index].getElementsByClassName('shadow'),
+                    blockShadowsLen = blockShadowsDOM.length,
+                    blockDOM = blocksDOM[index];
 
                 // SET PICTURES
                 for (let i = 0; i < blockPicturesLen; i += 1) {
                     const sign = i % 2 === 0 ? 1 : -1;
-                    animateElementTranslate3d(blockPictures[i], direction, sign);
+                    animateElementTranslate3d(blockPicturesDOM[i], direction, sign, ANIMATION_TRANSLATE_3D_MOVING);
                 }
 
                 // SET SHADOW
                 for (let i = 0; i < blockShadowsLen; i += 1) {
                     const sign = i % 2 === 0 ? 1 : -1;
-                    animateElementTranslate3d(blockShadows[i], direction, sign);
+                    animateElementTranslate3d(blockShadowsDOM[i], direction, sign, ANIMATION_TRANSLATE_3D_MOVING);
                 }
 
                 // BLOCK OPACITY
+
+                // Block moving
+                animateElementTranslate3d(blockDOM, direction, 1, ANIMATION_TRANSLATE_3D_MOVING);
             });
 
-            function animateElementTranslate3d(elem, direction, sign) {
-                const _elem = elem,
-                    elemId = _elem.id;
+            function animateElementTranslate3d(elemDOM, direction, sign, salt) {
+                const _elemDOM = elemDOM,
+                    {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elemDOM.style.transform);
 
-                // if (direction === ANIMATION_DIRECTION_UP) {
-                //     const {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elem.style.transform);
-                //     let {x: xPicNew, y: yPicNew, z: zPicNew} = getElemCoordinatesFromHistory(elemId);
-                //
-                //     if (xPicNew === undefined || yPicNew === undefined || zPicNew === undefined) {
-                //         xPicNew = (+xPic + ANIMATION_TRANSLATE_3D_MOVING * direction * sign);
-                //         yPicNew = (+yPic + ANIMATION_TRANSLATE_3D_MOVING * direction * sign);
-                //         zPicNew = zPic;
-                //     }
-                //
-                //     _elem.style.transform = `translate3d(
-                //     ${xPicNew}${UNIT_TRANSLATE_3D_X},
-                //     ${yPicNew}${UNIT_TRANSLATE_3D_Y},
-                //     ${zPicNew}${UNIT_TRANSLATE_3D_Z}
-                //     )`;
-                //
-                //     return;
-                // }
-
-                const {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elem.style.transform);
-                const xPicNew = (+xPic + ANIMATION_TRANSLATE_3D_MOVING * direction * sign),
-                    yPicNew = (+yPic + ANIMATION_TRANSLATE_3D_MOVING * direction * sign),
+                let xPicNew = (+xPic + salt * direction * sign),
+                    yPicNew = (+yPic + salt * direction * sign),
                     zPicNew = zPic;
 
-                _elem.style.transform = `translate3d(
+                xPicNew = Math.abs(xPicNew) > 20 ? (+xPic) : xPicNew;
+                yPicNew = Math.abs(yPicNew) > 20 ? (+yPic) : yPicNew;
+
+                _elemDOM.style.transform = `translate3d(
                 ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
                 ${yPicNew}${UNIT_TRANSLATE_3D_Y}, 
                 ${zPicNew}${UNIT_TRANSLATE_3D_Z}
                 )`;
 
-                trackElemCoordinatesHistory(elemId, xPicNew, yPicNew, zPicNew);
             }
-
-            function trackElemCoordinatesHistory(elemId, x, y, z) {
-                if (!elementPositions[elemId]) {
-                    elementPositions[elemId] = [];
-                }
-
-                elementPositions[elemId].push({x, y, z});
-            }
-
-            // function getElemCoordinatesFromHistory(elemId) {
-            //     const lastPos = (!!elementPositions[elemId])
-            //         ? elementPositions[elemId].pop()
-            //         : undefined;
-            //
-            //     if (!lastPos) {
-            //         return {x: undefined, y: undefined, z: undefined};
-            //     }
-            //
-            //     return {x: lastPos.x, y: lastPos.y, z: lastPos.z};
-            // }
         }
 
         function proceedRestoringInitialElementsSettings() {
             // RESTORE default elements position
             console.log('proceedRestoringInitialElementsSettings');
             window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback);
-            cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback = requestAnimationFrame(restoreInitialAnimationSettings);
+            restoreInitialAnimationSettings();
         }
 
         // Start first automatic animation
@@ -617,8 +594,8 @@
         clearTimeout(timeOutId);
         window.cancelAnimationFrame(cancelAnimationFrameCallback);
 
-        TRANSLATE_3D_MAX_VALUE = 50;
         ANIMATION_SCROLL_STEP = 1000;
+        ANIMATION_TRANSLATE_3D_MOVING = 5;
         if (userCurrTop < userPrevTop) {
             console.log('up'); // TODO: DEL
             scrollDirection = ANIMATION_DIRECTION_UP;
@@ -631,7 +608,7 @@
         cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
 
         timeOutId = setTimeout(() => {
-            TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;
+            ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING;
             ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
 
             removeUserScrollTransitions();

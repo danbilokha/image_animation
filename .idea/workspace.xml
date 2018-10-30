@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="07f7ad70-0e8d-4a2d-9a30-5480cdf3cb19" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.css" afterPath="$PROJECT_DIR$/index.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.js" afterPath="$PROJECT_DIR$/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -17,9 +16,9 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.3861145">
+    <splitter split-orientation="horizontal" split-proportion="0.40073082">
       <split-first>
-        <splitter split-orientation="horizontal" split-proportion="0.846519">
+        <splitter split-orientation="horizontal" split-proportion="0.8586006">
           <split-first>
             <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
               <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
@@ -97,31 +96,28 @@
           <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="630">
-                  <caret line="327" column="0" lean-forward="true" selection-start-line="327" selection-start-column="0" selection-end-line="327" selection-end-column="0" />
+                <state relative-caret-position="590">
+                  <caret line="569" column="11" lean-forward="true" selection-start-line="569" selection-start-column="11" selection-end-line="569" selection-end-column="11" />
                   <folding>
-                    <element signature="e#3613#3980#0" expanded="false" />
-                    <element signature="e#3986#4560#0" expanded="false" />
-                    <element signature="e#4609#5168#0" expanded="false" />
-                    <element signature="e#5210#5303#0" expanded="false" />
-                    <element signature="e#5358#5583#0" expanded="false" />
-                    <element signature="e#5631#5829#0" expanded="false" />
-                    <element signature="e#5835#5910#0" expanded="false" />
-                    <element signature="e#5945#5986#0" expanded="false" />
-                    <element signature="e#5992#6100#0" expanded="false" />
-                    <element signature="e#6146#6324#0" expanded="false" />
-                    <element signature="e#6330#6483#0" expanded="false" />
-                    <element signature="e#6520#6570#0" expanded="false" />
-                    <element signature="e#6597#6670#0" expanded="false" />
-                    <element signature="e#6715#9772#0" expanded="false" />
-                    <element signature="e#6875#7775#0" expanded="false" />
-                    <element signature="e#9842#9912#0" expanded="false" />
-                    <element signature="e#9961#10312#0" expanded="false" />
-                    <element signature="e#11538#11742#0" expanded="false" />
-                    <element signature="e#11815#11989#0" expanded="false" />
-                    <element signature="e#12119#13746#0" expanded="false" />
-                    <element signature="e#13952#16851#0" expanded="false" />
-                    <marker date="1540883367534" expanded="true" signature="21408:22391" ph="..." />
+                    <element signature="e#3700#4067#0" expanded="false" />
+                    <element signature="e#4073#4647#0" expanded="false" />
+                    <element signature="e#4696#5255#0" expanded="false" />
+                    <element signature="e#5819#6017#0" expanded="false" />
+                    <element signature="e#6023#6098#0" expanded="false" />
+                    <element signature="e#6133#6174#0" expanded="false" />
+                    <element signature="e#6180#6288#0" expanded="false" />
+                    <element signature="e#6334#6512#0" expanded="false" />
+                    <element signature="e#6518#6671#0" expanded="false" />
+                    <element signature="e#6708#6758#0" expanded="false" />
+                    <element signature="e#6785#6876#0" expanded="false" />
+                    <element signature="e#10515#10866#0" expanded="false" />
+                    <element signature="e#12094#12298#0" expanded="false" />
+                    <element signature="e#12371#12545#0" expanded="false" />
+                    <element signature="e#12675#14302#0" expanded="false" />
+                    <element signature="e#14508#17407#0" expanded="false" />
+                    <element signature="e#17466#20820#0" expanded="false" />
+                    <element signature="e#25036#25532#0" expanded="false" />
+                    <element signature="e#25581#26086#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -140,15 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>visibleBlocksIndexes</find>
-      <find>block</find>
-      <find>updatedOpacityFirstBlock</find>
-      <find>animationScrolled</find>
-      <find>updatedBlockOpacity</find>
-      <find>updateTrackBlocks</find>
-      <find>animationScrolledMax</find>
-      <find>_animationSectionScrolled</find>
-      <find>opacityHelper_TrackedPrevBlocks</find>
       <find>defaultAnimationPosition</find>
       <find>userCurrTop</find>
       <find>animationLoopHandler</find>
@@ -157,9 +144,7 @@
       <find>removeEventListener</find>
       <find>proceedAnimation</find>
       <find>cancelUserScrollingListenerCallback</find>
-      <find>restoreInitialAnimationSettings</find>
       <find>SCROLL_DIRECTION_LEFT</find>
-      <find>elementPositions</find>
       <find>ANIMATION_DEFAULT_SCROLLED</find>
       <find>setTimeout</find>
       <find>cancelAnimationFrameCallback</find>
@@ -167,9 +152,20 @@
       <find>getElemCoordinatesFromHistory</find>
       <find>proceedRestoringInitialElementsSettings</find>
       <find>FIRST_BLOCK_OPACITY</find>
-      <find>TRANSLATE_3D_MAX_VALUE</find>
       <find>scroll</find>
       <find>section</find>
+      <find>trackElemCoordinatesHistory</find>
+      <find>elementPositions</find>
+      <find>elemId</find>
+      <find>_elem</find>
+      <find>proceedPictureMoving</find>
+      <find>restoreInitialAnimationSettings</find>
+      <find>saveInitialAnimationSettings</find>
+      <find>ANIMATION_TRANSLATE_3D_MOVING</find>
+      <find>TRANSLATE_3D_MAX_VALUE</find>
+      <find>proceedAnimationMoving</find>
+      <find>TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE;</find>
+      <find>CALCULATION_SALT</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -277,7 +273,7 @@
       <option name="presentableId" value="Default" />
       <updated>1540647471232</updated>
       <workItem from="1540647472512" duration="55389000" />
-      <workItem from="1540830630146" duration="16128000" />
+      <workItem from="1540830630146" duration="18357000" />
     </task>
     <task id="LOCAL-00001" summary="have to be checked">
       <created>1540842998862</created>
@@ -300,11 +296,18 @@
       <option name="project" value="LOCAL" />
       <updated>1540883123919</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="extend user scrolling custom transition">
+      <created>1540883506096</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1540883506096</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71517000" />
+    <option name="totallyTimeSpent" value="73746000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -313,6 +316,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13487881" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32903227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -325,7 +329,6 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -367,7 +370,8 @@
     <MESSAGE value="have to be checked" />
     <MESSAGE value="fix moving out of section bug" />
     <MESSAGE value="user scrolling custom transition" />
-    <option name="LAST_COMMIT_MESSAGE" value="user scrolling custom transition" />
+    <MESSAGE value="extend user scrolling custom transition" />
+    <option name="LAST_COMMIT_MESSAGE" value="extend user scrolling custom transition" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -439,28 +443,25 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3613#3980#0" expanded="false" />
-            <element signature="e#3986#4560#0" expanded="false" />
-            <element signature="e#4609#5168#0" expanded="false" />
-            <element signature="e#5210#5303#0" expanded="false" />
-            <element signature="e#5358#5583#0" expanded="false" />
-            <element signature="e#5631#5829#0" expanded="false" />
-            <element signature="e#5835#5910#0" expanded="false" />
-            <element signature="e#5945#5986#0" expanded="false" />
-            <element signature="e#5992#6100#0" expanded="false" />
-            <element signature="e#6146#6324#0" expanded="false" />
-            <element signature="e#6330#6483#0" expanded="false" />
-            <element signature="e#6520#6570#0" expanded="false" />
-            <element signature="e#6597#6670#0" expanded="false" />
-            <element signature="e#6715#9772#0" expanded="false" />
-            <element signature="e#6875#7775#0" expanded="false" />
-            <element signature="e#9842#9912#0" expanded="false" />
-            <element signature="e#9961#10312#0" expanded="false" />
-            <element signature="e#11538#11742#0" expanded="false" />
-            <element signature="e#11815#11989#0" expanded="false" />
-            <element signature="e#12119#13746#0" expanded="false" />
-            <element signature="e#13952#16851#0" expanded="false" />
-            <marker date="1540883367534" expanded="true" signature="21408:22391" ph="..." />
+            <element signature="e#3700#4067#0" expanded="false" />
+            <element signature="e#4073#4647#0" expanded="false" />
+            <element signature="e#4696#5255#0" expanded="false" />
+            <element signature="e#5819#6017#0" expanded="false" />
+            <element signature="e#6023#6098#0" expanded="false" />
+            <element signature="e#6133#6174#0" expanded="false" />
+            <element signature="e#6180#6288#0" expanded="false" />
+            <element signature="e#6334#6512#0" expanded="false" />
+            <element signature="e#6518#6671#0" expanded="false" />
+            <element signature="e#6708#6758#0" expanded="false" />
+            <element signature="e#6785#6876#0" expanded="false" />
+            <element signature="e#10515#10866#0" expanded="false" />
+            <element signature="e#12094#12298#0" expanded="false" />
+            <element signature="e#12371#12545#0" expanded="false" />
+            <element signature="e#12675#14302#0" expanded="false" />
+            <element signature="e#14508#17407#0" expanded="false" />
+            <element signature="e#17466#20820#0" expanded="false" />
+            <element signature="e#25036#25532#0" expanded="false" />
+            <element signature="e#25581#26086#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -533,31 +534,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="327" column="0" lean-forward="true" selection-start-line="327" selection-start-column="0" selection-end-line="327" selection-end-column="0" />
+        <state relative-caret-position="590">
+          <caret line="569" column="11" lean-forward="true" selection-start-line="569" selection-start-column="11" selection-end-line="569" selection-end-column="11" />
           <folding>
-            <element signature="e#3613#3980#0" expanded="false" />
-            <element signature="e#3986#4560#0" expanded="false" />
-            <element signature="e#4609#5168#0" expanded="false" />
-            <element signature="e#5210#5303#0" expanded="false" />
-            <element signature="e#5358#5583#0" expanded="false" />
-            <element signature="e#5631#5829#0" expanded="false" />
-            <element signature="e#5835#5910#0" expanded="false" />
-            <element signature="e#5945#5986#0" expanded="false" />
-            <element signature="e#5992#6100#0" expanded="false" />
-            <element signature="e#6146#6324#0" expanded="false" />
-            <element signature="e#6330#6483#0" expanded="false" />
-            <element signature="e#6520#6570#0" expanded="false" />
-            <element signature="e#6597#6670#0" expanded="false" />
-            <element signature="e#6715#9772#0" expanded="false" />
-            <element signature="e#6875#7775#0" expanded="false" />
-            <element signature="e#9842#9912#0" expanded="false" />
-            <element signature="e#9961#10312#0" expanded="false" />
-            <element signature="e#11538#11742#0" expanded="false" />
-            <element signature="e#11815#11989#0" expanded="false" />
-            <element signature="e#12119#13746#0" expanded="false" />
-            <element signature="e#13952#16851#0" expanded="false" />
-            <marker date="1540883367534" expanded="true" signature="21408:22391" ph="..." />
+            <element signature="e#3700#4067#0" expanded="false" />
+            <element signature="e#4073#4647#0" expanded="false" />
+            <element signature="e#4696#5255#0" expanded="false" />
+            <element signature="e#5819#6017#0" expanded="false" />
+            <element signature="e#6023#6098#0" expanded="false" />
+            <element signature="e#6133#6174#0" expanded="false" />
+            <element signature="e#6180#6288#0" expanded="false" />
+            <element signature="e#6334#6512#0" expanded="false" />
+            <element signature="e#6518#6671#0" expanded="false" />
+            <element signature="e#6708#6758#0" expanded="false" />
+            <element signature="e#6785#6876#0" expanded="false" />
+            <element signature="e#10515#10866#0" expanded="false" />
+            <element signature="e#12094#12298#0" expanded="false" />
+            <element signature="e#12371#12545#0" expanded="false" />
+            <element signature="e#12675#14302#0" expanded="false" />
+            <element signature="e#14508#17407#0" expanded="false" />
+            <element signature="e#17466#20820#0" expanded="false" />
+            <element signature="e#25036#25532#0" expanded="false" />
+            <element signature="e#25581#26086#0" expanded="false" />
           </folding>
         </state>
       </provider>
