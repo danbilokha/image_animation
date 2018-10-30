@@ -49,8 +49,16 @@ body {
     transition: 2s; /* CHANGE SECTION TRANSITION HERE */
 }
 
+.section__user-scroll {
+    transition: 0.5s;
+}
+
 .block {
     transition: 4s; /* FOR SMOOTHLY BLOCK OPACITY */
+}
+
+.block__user-scroll {
+    transition: 1s;
 }
 
 .block__row {
