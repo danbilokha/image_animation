@@ -1,6 +1,25 @@
 'use strict';
 
-(function () {
+const settings = {
+    SET_FULL_ANIMATION_HEIGHT: false, // set height, which animation section has
+    DEFAULT_FIRST_BLOCK_OPACITY: '0.6',
+    DEFAULT_SECOND_BLOCK_OPACITY: '0.9',
+    CHANGE_OPACITY_SPEED: 0.1,
+    CHANGE_OPACITY_SPEED_INCREASED: 0.2,
+    SCROLL_FPS: 2000,
+    DEFAULT_TRANSLATE_3D_MAX_VALUE: 5,
+    DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
+    DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 1, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
+    DEFAULT_ANIMATION_SCROLL_STEP: 200, // Section moving
+    CALCULATION_SALT: 2, // Better not to change
+    // better to leave it as is
+    UNIT_TRANSLATE_3D_X: 'vw',
+    UNIT_TRANSLATE_3D_Y: 'vh',
+    UNIT_TRANSLATE_3D_Z: 'px',
+    COUNT_OF_BLOCK_ADDITIONAL_TRACK: 2
+};
+
+(function (settings) {
     /*
         polyfill. Please, delete, if already have in your project
      */
@@ -29,33 +48,34 @@
     // NO CHANGABLE
     const ANIMATION_DIRECTION_UP = 1,
         ANIMATION_DIRECTION_DOWN = -1,
-        DEFAULT_TRANSLATE_3D_MAX_VALUE = 5,
         SCROLL_DIRECTION_RIGHT = 1,
         SCROLL_DIRECTION_LEFT = -1,
         ANIMATION_DEFAULT_SCROLLED = 0,
         // NO CHANGABLE
         PICTURE_DIMENSION_VALUE = 0,
         SHADOW_DIMENSION_VALUE = -1,
-        UNIT_TRANSLATE_3D_X = 'vw',
-        UNIT_TRANSLATE_3D_Y = 'vh',
-        UNIT_TRANSLATE_3D_Z = 'px',
-        COUNT_OF_BLOCK_ADDITIONAL_TRACK = 2,
+        UNIT_TRANSLATE_3D_X = settings.UNIT_TRANSLATE_3D_X || 'vw',
+        UNIT_TRANSLATE_3D_Y = settings.UNIT_TRANSLATE_3D_Y || 'vh',
+        UNIT_TRANSLATE_3D_Z = settings.UNIT_TRANSLATE_3D_Z || 'px',
+        COUNT_OF_BLOCK_ADDITIONAL_TRACK = settings.COUNT_OF_BLOCK_ADDITIONAL_TRACK || 2,
         NO_OPACITY = 0,
         FULL_OPACITY = 1,
-        MAX_TRANSLATE_VALUE = 10,
         // MIGHT BE CHANGED IN ORDER TO FIND BEST EXPERIENCE
         // These settings might have impact on performance
-        TIME_TO_WAIT_BEFORE_START_ANIMATION = 1000,
-        SCROLL_FPS = 1000,
-        DEFAULT_ANIMATION_TRANSLATE_3D_MOVING = 1,
-        DEFAULT_ANIMATION_SCROLL_STEP = 200,
+        SET_FULL_ANIMATION_HEIGHT = settings.SET_FULL_ANIMATION_HEIGHT || false,
+        SCROLL_FPS = settings.SCROLL_FPS || 2000,
+        DEFAULT_TRANSLATE_3D_MAX_VALUE = settings.DEFAULT_TRANSLATE_3D_MAX_VALUE || 5, // HOW WIDELY ANIMATION COULD BE SPRAYED
+        DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER = settings.DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER || 5,
+        DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM = settings.DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM || 1,
+        DEFAULT_ANIMATION_SCROLL_STEP = settings.DEFAULT_ANIMATION_SCROLL_STEP || 200,
         // OPTION: opacity - BETTER not change
-        DEFAULT_FIRST_BLOCK_OPACITY = '0.6',
-        DEFAULT_SECOND_BLOCK_OPACITY = '0.9',
+        CHANGE_OPACITY_SPEED = settings.CHANGE_OPACITY_SPEED || 0.1,
+        CHANGE_OPACITY_SPEED_INCREASED = settings.CHANGE_OPACITY_SPEED_INCREASED || 0.2,
+        DEFAULT_FIRST_BLOCK_OPACITY = settings.DEFAULT_FIRST_BLOCK_OPACITY || '0.6',
+        DEFAULT_SECOND_BLOCK_OPACITY = settings.DEFAULT_SECOND_BLOCK_OPACITY || '0.9',
         FIRST_BLOCK_OPACITY = DEFAULT_FIRST_BLOCK_OPACITY,
         SECOND_BLOCK_OPACITY = DEFAULT_SECOND_BLOCK_OPACITY,
-        CHANGE_OPACITY_SPEED = 0.1,
-        CHANGE_OPACITY_SPEED_INCREASED = 0.2;
+        CALCULATION_SALT = settings.CALCULATION_SALT || 2;
 
     /*
         ============================================================
@@ -63,16 +83,16 @@
         ============================================================
      */
     let TRANSLATE_3D_MAX_VALUE = DEFAULT_TRANSLATE_3D_MAX_VALUE,
-        CALCULATION_SALT = 2,
         ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
-        ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING;
+        ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
 
     let cancelAnimationFrameCallback,
         cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback,
         proceedAnimationFn;
 
     // DOM ELEMENTS
-    const animationSectionDOM = document.getElementsByClassName('section')[0],
+    const animationBaseDOM = document.getElementsByClassName('base')[0],
+        animationSectionDOM = document.getElementsByClassName('section')[0],
         animationBlocksDOM = document.getElementsByClassName('block'),
         animationPicturesDOM = document.getElementsByClassName('picture');
 
@@ -100,16 +120,17 @@
     }
 
     function proceedExecution() {
-        // Uncomment to dynamically set up scrolling area
-        /*runAsync(
-            changeStyles,
-            baseElem,
-            sectionElem,
-            [
-                {'style.height': 'offsetWidth'},
-                {'style.height': 'px'}
-            ]
-        );*/
+        if (SET_FULL_ANIMATION_HEIGHT) {
+            runAsync(
+                changeStyles,
+                animationBaseDOM,
+                animationSectionDOM,
+                [
+                    {'style.height': 'offsetWidth'},
+                    {'style.height': 'px'}
+                ]
+            );
+        }
 
         animation();
         window.addEventListener('scroll', userScrolling);
@@ -535,8 +556,8 @@
                     yPicNew = (+yPic + salt * direction * sign),
                     zPicNew = zPic;
 
-                xPicNew = Math.abs(xPicNew) > MAX_TRANSLATE_VALUE ? (+xPic) : xPicNew;
-                yPicNew = Math.abs(yPicNew) > MAX_TRANSLATE_VALUE ? (+yPic) : yPicNew;
+                xPicNew = Math.abs(xPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+xPic) : xPicNew;
+                yPicNew = Math.abs(yPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+yPic) : yPicNew;
 
                 _elemDOM.style.transform = `translate3d(
                 ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
@@ -576,8 +597,8 @@
         clearTimeout(timeOutId);
         window.cancelAnimationFrame(cancelAnimationFrameCallback);
 
-        ANIMATION_SCROLL_STEP = 1000;
-        ANIMATION_TRANSLATE_3D_MOVING = 5;
+        ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP * 5;
+        ANIMATION_TRANSLATE_3D_MOVING = DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER;
         if (userCurrTop < userPrevTop) {
             scrollDirection = ANIMATION_DIRECTION_UP;
         } else {
@@ -590,7 +611,7 @@
 
         cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
         timeOutId = setTimeout(() => {
-            ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING;
+            ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
             ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
 
             removeUserScrollTransitions();
@@ -626,4 +647,4 @@
             animationPicturesDOM[i].classList.remove('picture__user-scroll')
         }
     }
-})();
+})(settings);

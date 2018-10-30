@@ -19,7 +19,7 @@ body {
     NEEDED CODE FOR ANIMATION
 */
 .base {
-    height: 500vh;
+    height: 300vh;
     background: slategray;
 }
 
@@ -46,7 +46,8 @@ body {
 .section {
     position: absolute;
     display: flex;
-    transition: 2s; /* CHANGE SECTION TRANSITION HERE */
+    transition: 4s; /* CHANGE SECTION TRANSITION HERE */
+    transition-timing-function: ease;
 }
 
 .section__user-scroll {
