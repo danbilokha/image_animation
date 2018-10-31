@@ -121,7 +121,7 @@ body {
     width: 100%;
     height: auto;
     transform-origin: 50% 100%;
-    transition: 5s; /* CHANGE SHADOW TRANSITION HERE */
+    transition: 3s; /* CHANGE SHADOW TRANSITION HERE */
 
     will-change: opacity, trasform;
 }

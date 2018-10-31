@@ -1,6 +1,7 @@
 'use strict';
 
 const settings = {
+    AUTOMATICALL_SECTION_SCROLLING_SPEED: 3000,
     SET_FULL_ANIMATION_HEIGHT: false, // set height, which animation section has
     DEFAULT_FIRST_BLOCK_OPACITY: '0.6',
     DEFAULT_SECOND_BLOCK_OPACITY: '0.8',
@@ -12,7 +13,7 @@ const settings = {
     DEFAULT_TRANSLATE_3D_INITIAL_VALUE: 3,
     DEFAULT_TRANSLATE_3D_MAX_VALUE: 5,
     DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 4, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
-    DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 0.5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
+    DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 3, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
     DEFAULT_ANIMATION_SCROLL_STEP: 500, // Section moving step
     CALCULATION_SALT: 2, // Better not to change
     // better to leave it as is
@@ -65,13 +66,14 @@ const settings = {
         FULL_OPACITY = 1,
         // MIGHT BE CHANGED IN ORDER TO FIND BEST EXPERIENCE
         // These settings might have impact on performance
+        AUTOMATICALL_SECTION_SCROLLING_SPEED = settings.AUTOMATICALL_SECTION_SCROLLING_SPEED || 3000,
         SET_FULL_ANIMATION_HEIGHT = settings.SET_FULL_ANIMATION_HEIGHT || false,
         SCROLL_FPS = settings.SCROLL_FPS || 2000,
         SHADOW_FIXES = settings.SHADOW_FIXES || 1.5,
         DEFAULT_TRANSLATE_3D_INITIAL_VALUE = settings.DEFAULT_TRANSLATE_3D_INITIAL_VALUE || 5,
         DEFAULT_TRANSLATE_3D_MAX_VALUE = settings.DEFAULT_TRANSLATE_3D_MAX_VALUE || 5, // HOW WIDELY ANIMATION COULD BE SPRAYED
         DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER = settings.DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER || 5,
-        DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM = settings.DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM || 1,
+        DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM = settings.DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM || 10,
         DEFAULT_ANIMATION_SCROLL_STEP = settings.DEFAULT_ANIMATION_SCROLL_STEP || 500,
         // OPTION: opacity - BETTER not change
         CHANGE_OPACITY_SPEED = settings.CHANGE_OPACITY_SPEED || 0.1,
@@ -125,7 +127,6 @@ const settings = {
         COUNT_OF_TRACKING_BLOCKS = Math.round(BLOCKS_FIT_IN_WINDOW + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
 
     BLOCKS.padding = getBlocksLeftPaddings();
-    console.log(BLOCKS, BLOCKS_FIT_IN_WINDOW, BLOCKS_TO_WORK_WITH);
 
     function run() {
         if (!!cancelAnimationFrameCb) {
@@ -197,10 +198,10 @@ const settings = {
     }
 
     function getBlocksLeftPaddings() {
-        const result = {};
+        const result = [];
 
         for (let i = 0; i < BLOCKS_NUMBER; i += 1) {
-            result[i] = blocksDOM[i].offsetLeft;
+            result.push({blockIndex: i, blockOffset: blocksDOM[i].offsetLeft});
         }
 
         return result;
@@ -232,12 +233,15 @@ const settings = {
         const _elemDOM = elemDOM,
             {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elemDOM.style.transform);
 
-        let xPicNew = (+xPic + -5),
-            yPicNew = (+yPic + -5),
+        console.log(+xPic, salt);
+        let xPicNew = (+xPic + salt * direction * sign),
+            yPicNew = (+yPic + salt * direction * sign),
             zPicNew = zPic;
+        console.log(xPicNew);
 
         //xPicNew = Math.abs(xPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+xPic) : xPicNew;
         //yPicNew = Math.abs(yPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+yPic) : yPicNew;
+
 
         _elemDOM.style.transform = `translate3d(
                 ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
@@ -407,7 +411,7 @@ const settings = {
         }
     }
 
-    function restoreInitialAnimationSettings() {
+    function restoreInitialElementsPositions() {
         for (let elemId in defaultElementsPositions) {
             const elem = document.getElementById(elemId);
             setTranslate3d(
@@ -504,7 +508,7 @@ const settings = {
             //visibleBlocksIndexes = updateBlocksTrackList(blocksDOM, visibleBlocksIndexes, sectionScrolled, sectionScrollDirection);
             //console.log(visibleBlocksIndexes);
 
-            // Check animation scroll direction
+            // Section scroll direction has been changed
             if (
                 Math.abs(sectionScrolled) > ANIMATION_TO_BE_SCROLLED
                 || sectionScrolled === DEFAULT_SECTION_SCROLLED
@@ -514,7 +518,7 @@ const settings = {
                     : SCROLL_DIRECTION_LEFT;
 
                 //setInitialBlocksOpacity(blocksDOM, visibleBlocksIndexes);
-                //proceedRestoringInitialElementsSettings();
+                proceedRestoringInitialElementsSettings();
             }
         };
 
@@ -525,7 +529,7 @@ const settings = {
             // Start first automatic animation
             window.cancelAnimationFrame(cancelAnimationFrameCb);
             cancelAnimationFrameCb = requestAnimationFrame(proceedAnimationFn);
-        }, 3000);
+        }, AUTOMATICALL_SECTION_SCROLLING_SPEED);
     }
 
     function proceedElementsMoving(sectionScrolled, sectionScrollDirection) {
@@ -542,7 +546,8 @@ const settings = {
             // SET PICTURES
             for (let i = 0; i < blockPicturesLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
-               animateElementTranslate3d(blockPicturesDOM[i], sectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
+                console.info(ANIMATION_TRANSLATE_3D_MOVING);
+                animateElementTranslate3d(blockPicturesDOM[i], sectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
             }
 
             // SET SHADOW
@@ -575,27 +580,28 @@ const settings = {
     }
 
     function getBlocksToWorkWith(sectionScrolled) {
-        let result = [],
+        let blocksInfoArray = [...BLOCKS.padding],
+            result = blocksInfoArray.splice(-BLOCKS_TO_WORK_WITH),
             _sectionScrolled = Math.abs(sectionScrolled);
 
-        for (let blockNumber in BLOCKS.padding) {
-            if (BLOCKS.padding[blockNumber] > _sectionScrolled) {
-                let takenBlock = 0;
-                while (takenBlock !== BLOCKS_TO_WORK_WITH) {
-                    result.push(parseInt(blockNumber, 10) + takenBlock++);
-                }
+        return blocksInfoArray
+            .reverse()
+            .reduce(
+                (prev, curr) => {
+                    if (_sectionScrolled < curr.blockOffset) {
+                        prev.splice(-1);
+                        prev.unshift(curr);
 
-                return result;
-            }
-        }
-
-        return [];
+                    }
+                    return prev;
+                },
+                result
+            )
+            .map(v => v.blockIndex);
     }
 
     function proceedRestoringInitialElementsSettings() {
-        // RESTORE default elements position
-        window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCb);
-        restoreInitialAnimationSettings();
+        requestAnimationFrame(restoreInitialElementsPositions);
     }
 
     function proceedSectionMoving(sectionToBeScrolled) {
