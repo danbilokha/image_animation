@@ -13,7 +13,7 @@ const settings = {
     DEFAULT_TRANSLATE_3D_MAX_VALUE: 5,
     DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 4, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
     DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 0.5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
-    DEFAULT_ANIMATION_SCROLL_STEP: 2500, // Section moving step
+    DEFAULT_ANIMATION_SCROLL_STEP: 500, // Section moving step
     CALCULATION_SALT: 2, // Better not to change
     // better to leave it as is
     UNIT_TRANSLATE_3D_X: 'vw',
@@ -113,6 +113,20 @@ const settings = {
     document.addEventListener('DOMContentLoaded', run);
     window.addEventListener('resize', run);
 
+    const CLIENT_INNER_WIDTH = window.innerWidth,
+        ANIMATION_SECTION_WIDTH = sectionDOM.offsetWidth,
+        ANIMATION_TO_BE_SCROLLED = ANIMATION_SECTION_WIDTH - CLIENT_INNER_WIDTH;
+
+    const BLOCKS = {},
+        BLOCKS_NUMBER = blocksDOM.length,
+        BLOCK_WIDTH = blocksDOM[0].offsetWidth,
+        BLOCKS_FIT_IN_WINDOW = CLIENT_INNER_WIDTH / BLOCK_WIDTH,
+        BLOCKS_TO_WORK_WITH = Math.round(BLOCKS_FIT_IN_WINDOW),
+        COUNT_OF_TRACKING_BLOCKS = Math.round(BLOCKS_FIT_IN_WINDOW + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
+
+    BLOCKS.padding = getBlocksLeftPaddings();
+    console.log(BLOCKS, BLOCKS_FIT_IN_WINDOW, BLOCKS_TO_WORK_WITH);
+
     function run() {
         if (!!cancelAnimationFrameCb) {
             window.cancelAnimationFrame(cancelAnimationFrameCb);
@@ -180,6 +194,16 @@ const settings = {
         elem.id = _hash;
 
         return _hash;
+    }
+
+    function getBlocksLeftPaddings() {
+        const result = {};
+
+        for (let i = 0; i < BLOCKS_NUMBER; i += 1) {
+            result[i] = blocksDOM[i].offsetLeft;
+        }
+
+        return result;
     }
 
     function getTranslate3dValues(cssTextStyleValue) {
@@ -396,15 +420,7 @@ const settings = {
     }
 
     function animationRunner() {
-        const CLIENT_INNER_WIDTH = window.innerWidth,
-            ANIMATION_SECTION_WIDTH = sectionDOM.offsetWidth,
-            ANIMATION_TO_BE_SCROLLED = ANIMATION_SECTION_WIDTH - CLIENT_INNER_WIDTH;
-
-        const BLOCK_WIDTH = blocksDOM[0].offsetWidth,
-            BLOCKS_FIT_IN_WINDOW = CLIENT_INNER_WIDTH / BLOCK_WIDTH,
-            COUNT_OF_TRACKING_BLOCKS = Math.round(BLOCKS_FIT_IN_WINDOW + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
-
-        let visibleBlocksIndexes = setInitialBlocksTrackList(COUNT_OF_TRACKING_BLOCKS);
+        //let visibleBlocksIndexes = setInitialBlocksTrackList(COUNT_OF_TRACKING_BLOCKS);
         //setInitialBlocksOpacity(blocksDOM, visibleBlocksIndexes);
 
         // SYSTEM ANIMATION SETTINGS
@@ -450,7 +466,6 @@ const settings = {
         // }
 
         proceedAnimationFn = function proceedAnimation() {
-            console.log('proceedAnimation');
             const sectionToBeScrolled = sectionScrolled + (SECTION_SCROLL_STEP * sectionScrollDirection);
 
             // Check, that section is moving in right frames
@@ -480,12 +495,11 @@ const settings = {
              */
             proceedSectionMoving(sectionToBeScrolled);
             sectionScrolled = sectionToBeScrolled;
-            console.log(sectionScrolled);
 
             /*
                 =================== Picture moving animation ===============
              */
-            proceedElementsMoving(blocksDOM, visibleBlocksIndexes, sectionScrollDirection);
+            proceedElementsMoving(sectionScrolled, sectionScrollDirection);
 
             //visibleBlocksIndexes = updateBlocksTrackList(blocksDOM, visibleBlocksIndexes, sectionScrolled, sectionScrollDirection);
             //console.log(visibleBlocksIndexes);
@@ -514,8 +528,11 @@ const settings = {
         }, 3000);
     }
 
-    function proceedElementsMoving(blocksDOM, trackedBlocksIndexes, animationSectionScrollDirection) {
-        trackedBlocksIndexes.forEach((index) => {
+    function proceedElementsMoving(sectionScrolled, sectionScrollDirection) {
+        let _sectionScrolled = Math.abs(sectionScrolled),
+            blocksIndexesToWorkWith = getBlocksToWorkWith(sectionScrolled);
+
+        blocksIndexesToWorkWith.forEach((index) => {
             const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
                 blockPicturesLen = blockPicturesDOM.length,
                 blockShadowsDOM = blocksDOM[index].getElementsByClassName('shadow'),
@@ -525,17 +542,17 @@ const settings = {
             // SET PICTURES
             for (let i = 0; i < blockPicturesLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
-                //animateElementTranslate3d(blockPicturesDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
+               animateElementTranslate3d(blockPicturesDOM[i], sectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
             }
 
             // SET SHADOW
             for (let i = 0; i < blockShadowsLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
-                //animateElementTranslate3d(blockShadowsDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
+                animateElementTranslate3d(blockShadowsDOM[i], sectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
             }
 
             // Block moving
-            //animateElementTranslate3d(blockDOM, animationSectionScrollDirection, 1, ANIMATION_TRANSLATE_3D_MOVING);
+            //animateElementTranslate3d(blockDOM, sectionScrollDirection, 1, ANIMATION_TRANSLATE_3D_MOVING);
         });
 
         // BLOCK OPACITY
@@ -544,17 +561,35 @@ const settings = {
         // let opacityChangeSpeed1 = 0,
         //     opacityChangeSpeed2 = 0;
         //
-        // if (animationSectionScrollDirection === SCROLL_DIRECTION_LEFT) {
+        // if (sectionScrollDirection === SCROLL_DIRECTION_LEFT) {
         //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED_INCREASED;
         //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED;
-        // } else if (animationSectionScrollDirection === SCROLL_DIRECTION_RIGHT) {
+        // } else if (sectionScrollDirection === SCROLL_DIRECTION_RIGHT) {
         //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED;
         //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED_INCREASED;
         // }
         //
-        // changeOpacity(blockFirstDOM, opacityChangeSpeed1, animationSectionScrollDirection);
+        // changeOpacity(blockFirstDOM, opacityChangeSpeed1, sectionScrollDirection);
         // const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
-        // changeOpacity(blockSecondDOM, opacityChangeSpeed2, animationSectionScrollDirection);
+        // changeOpacity(blockSecondDOM, opacityChangeSpeed2, sectionScrollDirection);
+    }
+
+    function getBlocksToWorkWith(sectionScrolled) {
+        let result = [],
+            _sectionScrolled = Math.abs(sectionScrolled);
+
+        for (let blockNumber in BLOCKS.padding) {
+            if (BLOCKS.padding[blockNumber] > _sectionScrolled) {
+                let takenBlock = 0;
+                while (takenBlock !== BLOCKS_TO_WORK_WITH) {
+                    result.push(parseInt(blockNumber, 10) + takenBlock++);
+                }
+
+                return result;
+            }
+        }
+
+        return [];
     }
 
     function proceedRestoringInitialElementsSettings() {
@@ -566,7 +601,6 @@ const settings = {
     function proceedSectionMoving(sectionToBeScrolled) {
         sectionDOM.style.left = sectionToBeScrolled + 'px';
     }
-
 
     /*
         ============================================================
