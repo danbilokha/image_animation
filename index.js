@@ -13,7 +13,7 @@ const settings = {
     DEFAULT_TRANSLATE_3D_MAX_VALUE: 5,
     DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER: 4, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
     DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM: 0.5, // should be less or equal to DEFAULT_TRANSLATE_3D_MAX_VALUE
-    DEFAULT_ANIMATION_SCROLL_STEP: 200, // Section moving
+    DEFAULT_ANIMATION_SCROLL_STEP: 2500, // Section moving step
     CALCULATION_SALT: 2, // Better not to change
     // better to leave it as is
     UNIT_TRANSLATE_3D_X: 'vw',
@@ -53,7 +53,7 @@ const settings = {
         ANIMATION_DIRECTION_DOWN = -1,
         SCROLL_DIRECTION_RIGHT = 1,
         SCROLL_DIRECTION_LEFT = -1,
-        ANIMATION_DEFAULT_SCROLLED = 0,
+        DEFAULT_SECTION_SCROLLED = 0,
         // NO CHANGABLE
         PICTURE_DIMENSION_VALUE = 0,
         SHADOW_DIMENSION_VALUE = -1,
@@ -72,7 +72,7 @@ const settings = {
         DEFAULT_TRANSLATE_3D_MAX_VALUE = settings.DEFAULT_TRANSLATE_3D_MAX_VALUE || 5, // HOW WIDELY ANIMATION COULD BE SPRAYED
         DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER = settings.DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER || 5,
         DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM = settings.DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM || 1,
-        DEFAULT_ANIMATION_SCROLL_STEP = settings.DEFAULT_ANIMATION_SCROLL_STEP || 200,
+        DEFAULT_ANIMATION_SCROLL_STEP = settings.DEFAULT_ANIMATION_SCROLL_STEP || 500,
         // OPTION: opacity - BETTER not change
         CHANGE_OPACITY_SPEED = settings.CHANGE_OPACITY_SPEED || 0.1,
         CHANGE_OPACITY_SPEED_INCREASED = settings.CHANGE_OPACITY_SPEED_INCREASED || 0.2,
@@ -90,35 +90,36 @@ const settings = {
         ============================================================
      */
     let TRANSLATE_3D_INITIAL_VALUE = DEFAULT_TRANSLATE_3D_INITIAL_VALUE,
-        ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
+        SECTION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
         ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
 
-    let cancelAnimationFrameCallback,
-        cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback,
+    let cancelAnimationIntervalCb,
+        cancelAnimationFrameCb,
+        cancelAnimationProceedRestoringInitialElementsSettingsFrameCb,
         proceedAnimationFn;
 
     // DOM ELEMENTS
-    const animationBaseDOM = document.getElementsByClassName('base')[0],
-        animationSectionDOM = document.getElementsByClassName('section')[0],
-        animationBlocksDOM = document.getElementsByClassName('block'),
-        animationPicturesDOM = document.getElementsByClassName('picture');
+    const baseDOM = document.getElementsByClassName('base')[0],
+        sectionDOM = document.getElementsByClassName('section')[0],
+        blocksDOM = document.getElementsByClassName('block'),
+        picturesDOM = document.getElementsByClassName('picture');
 
     /*
         Animation state variables
      */
     const defaultElementsPositions = {};
-    let scrollDirection = SCROLL_DIRECTION_LEFT;
+    let sectionScrollDirection = SCROLL_DIRECTION_LEFT;
 
     document.addEventListener('DOMContentLoaded', run);
     window.addEventListener('resize', run);
 
     function run() {
-        if (!!cancelAnimationFrameCallback) {
-            window.cancelAnimationFrame(cancelAnimationFrameCallback);
+        if (!!cancelAnimationFrameCb) {
+            window.cancelAnimationFrame(cancelAnimationFrameCb);
         }
 
-        if(!!cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback) {
-            window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback);
+        if (!!cancelAnimationProceedRestoringInitialElementsSettingsFrameCb) {
+            window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCb);
         }
 
         //window.removeEventListener('scroll', userScrolling);
@@ -129,8 +130,8 @@ const settings = {
         if (SET_FULL_ANIMATION_HEIGHT) {
             runAsync(
                 changeStyles,
-                animationBaseDOM,
-                animationSectionDOM,
+                baseDOM,
+                sectionDOM,
                 [
                     {'style.height': 'offsetWidth'},
                     {'style.height': 'px'}
@@ -203,6 +204,25 @@ const settings = {
         elem.style.transform = `translate3d(${x}, ${y}, ${z})`;
     }
 
+    function animateElementTranslate3d(elemDOM, direction, sign, salt) {
+        const _elemDOM = elemDOM,
+            {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elemDOM.style.transform);
+
+        let xPicNew = (+xPic + -5),
+            yPicNew = (+yPic + -5),
+            zPicNew = zPic;
+
+        //xPicNew = Math.abs(xPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+xPic) : xPicNew;
+        //yPicNew = Math.abs(yPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+yPic) : yPicNew;
+
+        _elemDOM.style.transform = `translate3d(
+                ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
+                ${yPicNew}${UNIT_TRANSLATE_3D_Y}, 
+                ${zPicNew}${UNIT_TRANSLATE_3D_Z}
+                )`;
+
+    }
+
     function changeOpacity(elemDOM, changeSpeed, animationSectionScrollDirection) {
         let currentBlockDOMOpacity = +elemDOM.style.opacity;
 
@@ -260,25 +280,11 @@ const settings = {
         animationRunner();
     }
 
-    function setInitialBlocksOpacity(blocks = animationBlocksDOM, visibleBlocksIndexes) {
-        let _visibleBlocksIndexes = visibleBlocksIndexes;
-        if (typeof _visibleBlocksIndexes === 'number') {
-            _visibleBlocksIndexes = [];
-            for (let i = 0; i < visibleBlocksIndexes; i += 1) {
-                _visibleBlocksIndexes.push(i);
-            }
-        }
-
-        blocks[_visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
-        blocks[_visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
-        blocks[_visibleBlocksIndexes[2]].style.opacity = THIRD_BLOCK_OPACITY;
-
-        for (let i = 2; i < _visibleBlocksIndexes.length; i += 1) {
-            blocks[i].style.opacity = FULL_OPACITY;
-        }
+    function saveInitialAnimationSettings(elementUniqueId, x, y, z) {
+        defaultElementsPositions[elementUniqueId] = {x, y, z};
     }
 
-    function setRowPicturesAndShadows(rowElem, blockNumber, order = ANIMATION_DIRECTION_DOWN) {
+    function setInitialRowElementsPosition(rowElem, blockNumber, order = ANIMATION_DIRECTION_DOWN) {
         let picturesDOM = rowElem.getElementsByClassName('picture'),
             foundedPicturesLen = picturesDOM.length,
             shadowsDOM = rowElem.getElementsByClassName('shadow'),
@@ -330,8 +336,8 @@ const settings = {
             firstBlockFirstFowDOM = blocksDOM[0].getElementsByClassName('row-first')[0],
             firstBlockSecondFowDOM = blocksDOM[0].getElementsByClassName('row-second')[0];
 
-        setRowPicturesAndShadows(firstBlockFirstFowDOM, 0, ANIMATION_DIRECTION_DOWN);
-        setRowPicturesAndShadows(firstBlockSecondFowDOM, 0, ANIMATION_DIRECTION_UP);
+        setInitialRowElementsPosition(firstBlockFirstFowDOM, 0, ANIMATION_DIRECTION_DOWN);
+        setInitialRowElementsPosition(firstBlockSecondFowDOM, 0, ANIMATION_DIRECTION_UP);
 
         runAsync((blocks, foundedBlocks) => {
             for (let i = 1; i < foundedBlocks; i += 1) {
@@ -339,8 +345,8 @@ const settings = {
                     blockSecondRowDOM = blocks[i].getElementsByClassName('row-second')[0],
                     blockDOM = blocks[i];
 
-                setRowPicturesAndShadows(blockFirstRowDOM, i, ANIMATION_DIRECTION_DOWN);
-                setRowPicturesAndShadows(blockSecondRowDOM, i, ANIMATION_DIRECTION_UP);
+                setInitialRowElementsPosition(blockFirstRowDOM, i, ANIMATION_DIRECTION_DOWN);
+                setInitialRowElementsPosition(blockSecondRowDOM, i, ANIMATION_DIRECTION_UP);
 
                 // (SET): DEFAULT blocksDOM transition
                 const blockDOMUniqueId = setUniqueId(blockDOM, Math.random(), Math.random(), Math.random());
@@ -349,8 +355,32 @@ const settings = {
         }, blocksDOM, foundedBlocks);
     }
 
-    function saveInitialAnimationSettings(elementUniqueId, x, y, z) {
-        defaultElementsPositions[elementUniqueId] = {x, y, z};
+    function setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously) {
+        let result = [];
+
+        for (let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
+            result.push(i);
+        }
+
+        return result;
+    }
+
+    function setInitialBlocksOpacity(blocks = blocksDOM, visibleBlocksIndexes) {
+        let _visibleBlocksIndexes = visibleBlocksIndexes;
+        if (typeof _visibleBlocksIndexes === 'number') {
+            _visibleBlocksIndexes = [];
+            for (let i = 0; i < visibleBlocksIndexes; i += 1) {
+                _visibleBlocksIndexes.push(i);
+            }
+        }
+
+        blocks[_visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
+        blocks[_visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
+        blocks[_visibleBlocksIndexes[2]].style.opacity = THIRD_BLOCK_OPACITY;
+
+        for (let i = 2; i < _visibleBlocksIndexes.length; i += 1) {
+            blocks[i].style.opacity = FULL_OPACITY;
+        }
     }
 
     function restoreInitialAnimationSettings() {
@@ -365,124 +395,75 @@ const settings = {
         }
     }
 
-    function animateElementTranslate3d(elemDOM, direction, sign, salt) {
-        const _elemDOM = elemDOM,
-            {x: xPic, y: yPic, z: zPic} = getTranslate3dValues(_elemDOM.style.transform);
-
-        let xPicNew = (+xPic + -5),
-            yPicNew = (+yPic + -5),
-            zPicNew = zPic;
-
-        console.log()
-
-        //xPicNew = Math.abs(xPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+xPic) : xPicNew;
-        //yPicNew = Math.abs(yPicNew) > DEFAULT_TRANSLATE_3D_MAX_VALUE ? (+yPic) : yPicNew;
-
-        _elemDOM.style.transform = `translate3d(
-                ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
-                ${yPicNew}${UNIT_TRANSLATE_3D_Y}, 
-                ${zPicNew}${UNIT_TRANSLATE_3D_Z}
-                )`;
-
-    }
-
     function animationRunner() {
-        // SIZES
-        const innerClientWidth = window.innerWidth,
-            blockWidth = animationBlocksDOM[0].offsetWidth,
-            animationSectionWidth = animationSectionDOM.offsetWidth,
-            animationToBeScrolled = animationSectionWidth - innerClientWidth;
+        const CLIENT_INNER_WIDTH = window.innerWidth,
+            ANIMATION_SECTION_WIDTH = sectionDOM.offsetWidth,
+            ANIMATION_TO_BE_SCROLLED = ANIMATION_SECTION_WIDTH - CLIENT_INNER_WIDTH;
 
-        // ANIMATION CALCULATIONS
-        const blocksToBeFittedInWindow = innerClientWidth / blockWidth,
-            numberOfTrackedBlockSimultaneously = Math.round(blocksToBeFittedInWindow + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
+        const BLOCK_WIDTH = blocksDOM[0].offsetWidth,
+            BLOCKS_FIT_IN_WINDOW = CLIENT_INNER_WIDTH / BLOCK_WIDTH,
+            COUNT_OF_TRACKING_BLOCKS = Math.round(BLOCKS_FIT_IN_WINDOW + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
 
-        let visibleBlocksIndexes = setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously);
-        //setInitialBlocksOpacity(animationBlocksDOM, visibleBlocksIndexes);
-
-        // SYSTEM ANIMATION
-        //const elementPositions = {};
+        let visibleBlocksIndexes = setInitialBlocksTrackList(COUNT_OF_TRACKING_BLOCKS);
+        //setInitialBlocksOpacity(blocksDOM, visibleBlocksIndexes);
 
         // SYSTEM ANIMATION SETTINGS
-        let animationStart = new Date(),
-            animationPrevTime = animationStart,
-            isFirstAnimationRun = true,
-            sectionBordersTimeout;
+        let sectionBordersTimeout;
 
-        let animationScrolled = ANIMATION_DEFAULT_SCROLLED,
-            animationSectionScrolledMaxTracking = 0,
-            animationBlockScrolledTracking = -100;
+        let sectionScrolled = DEFAULT_SECTION_SCROLLED,
+            sectionScrollMax = 0,
+            blockScrolled = -100;
 
-        function setInitialBlocksTrackList(numberOfTrackedBlockSimultaneously) {
-            let result = [];
-
-            for (let i = 0, len = numberOfTrackedBlockSimultaneously; i < len; i += 1) {
-                result.push(i);
-            }
-
-            return result;
-        }
-
-        function updateBlocksTrackList(blocks, currentTrackedBlocks, animationSectionScrolled, animationSectionScrollDirection) {
-            let _currentTrackedBlocks = [...currentTrackedBlocks],
-                _animationSectionScrolled = Math.abs(animationSectionScrolled),
-                _sizeSectionScrolledTo = 0;
-
-            if (animationSectionScrollDirection === ANIMATION_DIRECTION_DOWN) {
-                animationSectionScrolledMaxTracking = (animationSectionScrolledMaxTracking > _animationSectionScrolled)
-                    ? animationSectionScrolledMaxTracking
-                    : _animationSectionScrolled;
-
-                _sizeSectionScrolledTo = _animationSectionScrolled;
-            }
-
-            if (animationSectionScrollDirection === ANIMATION_DIRECTION_UP) {
-                _sizeSectionScrolledTo = animationSectionScrolledMaxTracking - _animationSectionScrolled;
-            }
-
-            const blockScrolled = Math.floor(_sizeSectionScrolledTo / blockWidth) - 1;
-            if (blockScrolled <= 0 || blockScrolled === animationBlockScrolledTracking) {
-                return [..._currentTrackedBlocks];
-            }
-            animationBlockScrolledTracking = blockScrolled;
-
-            const scrollNormalized = animationSectionScrollDirection * -1,
-                firstTracked = _currentTrackedBlocks[0],
-                lastTracked = _currentTrackedBlocks[_currentTrackedBlocks.length - 1];
-
-            // Check IF first and last future elements exist
-            if (!blocks[firstTracked + scrollNormalized] || !blocks[lastTracked + scrollNormalized]) {
-                return [..._currentTrackedBlocks];
-            }
-
-            return _currentTrackedBlocks.map(index => index + scrollNormalized);
-        }
+        // function updateBlocksTrackList(blocks, currentTrackedBlocks, sectionScrolled, sectionScrollDirection) {
+        //     let _currentTrackedBlocks = [...currentTrackedBlocks],
+        //         _sectionScrolled = Math.abs(sectionScrolled),
+        //         _sizeSectionScrolledTo = 0;
+        //
+        //     if (sectionScrollDirection === ANIMATION_DIRECTION_DOWN) {
+        //         sectionScrollMax = (sectionScrollMax > _sectionScrolled)
+        //             ? sectionScrollMax
+        //             : _sectionScrolled;
+        //
+        //         _sizeSectionScrolledTo = _sectionScrolled;
+        //     }
+        //
+        //     if (sectionScrollDirection === ANIMATION_DIRECTION_UP) {
+        //         _sizeSectionScrolledTo = sectionScrollMax - _sectionScrolled;
+        //     }
+        //
+        //     const _blockScrolled = Math.floor(_sizeSectionScrolledTo / BLOCK_WIDTH) - 1;
+        //     if (_blockScrolled <= 0 || _blockScrolled === blockScrolled) {
+        //         return [..._currentTrackedBlocks];
+        //     }
+        //     blockScrolled = _blockScrolled;
+        //
+        //     const scrollNormalized = sectionScrollDirection * -1,
+        //         firstTracked = _currentTrackedBlocks[0],
+        //         lastTracked = _currentTrackedBlocks[_currentTrackedBlocks.length - 1];
+        //
+        //     // Check IF first and last future elements exist
+        //     if (!blocks[firstTracked + scrollNormalized] || !blocks[lastTracked + scrollNormalized]) {
+        //         return [..._currentTrackedBlocks];
+        //     }
+        //
+        //     return _currentTrackedBlocks.map(index => index + scrollNormalized);
+        // }
 
         proceedAnimationFn = function proceedAnimation() {
-            const animationCurrentTime = new Date(),
-                fps = animationCurrentTime - animationPrevTime,
-                sectionAfterScroll = animationScrolled + (ANIMATION_SCROLL_STEP * scrollDirection);
-
-            // In order do not proceed animation too often
-            if (fps < SCROLL_FPS && !isFirstAnimationRun) {
-                window.cancelAnimationFrame(cancelAnimationFrameCallback);
-                cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
-                return;
-            } else {
-                isFirstAnimationRun = false;
-            }
+            console.log('proceedAnimation');
+            const sectionToBeScrolled = sectionScrolled + (SECTION_SCROLL_STEP * sectionScrollDirection);
 
             // Check, that section is moving in right frames
-            if (sectionAfterScroll > 0 || Math.abs(sectionAfterScroll) > animationToBeScrolled) {
-                // scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
+            if (sectionToBeScrolled > 0 || Math.abs(sectionToBeScrolled) > ANIMATION_TO_BE_SCROLLED) {
+                // sectionScrollDirection = sectionScrollDirection === SCROLL_DIRECTION_LEFT
                 //     ? SCROLL_DIRECTION_RIGHT
                 //     : SCROLL_DIRECTION_LEFT;
                 //
                 // clearTimeout(sectionBordersTimeout);
                 // sectionBordersTimeout = setTimeout(() => {
                 //     proceedRestoringInitialElementsSettings();
-                //     window.cancelAnimationFrame(cancelAnimationFrameCallback);
-                //     cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
+                //     window.cancelAnimationFrame(cancelAnimationFrameCb);
+                //     cancelAnimationFrameCb = requestAnimationFrame(proceedAnimation);
                 // }, SCROLL_FPS);
                 //
                 // return;
@@ -495,95 +476,97 @@ const settings = {
              */
 
             /*
-                ============================================================
-                                    Picture moving animation
-                ============================================================
+                =================== Section moving animation ================
              */
-            proceedAnimationMoving(animationBlocksDOM, visibleBlocksIndexes, scrollDirection);
+            proceedSectionMoving(sectionToBeScrolled);
+            sectionScrolled = sectionToBeScrolled;
+            console.log(sectionScrolled);
 
             /*
-                ============================================================
-                                    Section moving animation
-                ============================================================
+                =================== Picture moving animation ===============
              */
-            // animationSectionDOM.style.left = sectionAfterScroll + 'px';
-            //
-            // animationScrolled = sectionAfterScroll;
-            //visibleBlocksIndexes = updateBlocksTrackList(animationBlocksDOM, visibleBlocksIndexes, animationScrolled, scrollDirection);
+            proceedElementsMoving(blocksDOM, visibleBlocksIndexes, sectionScrollDirection);
+
+            //visibleBlocksIndexes = updateBlocksTrackList(blocksDOM, visibleBlocksIndexes, sectionScrolled, sectionScrollDirection);
+            //console.log(visibleBlocksIndexes);
 
             // Check animation scroll direction
             if (
-                Math.abs(animationScrolled) > animationToBeScrolled
-                || animationScrolled === ANIMATION_DEFAULT_SCROLLED
+                Math.abs(sectionScrolled) > ANIMATION_TO_BE_SCROLLED
+                || sectionScrolled === DEFAULT_SECTION_SCROLLED
             ) {
-                scrollDirection = scrollDirection === SCROLL_DIRECTION_LEFT
+                sectionScrollDirection = sectionScrollDirection === SCROLL_DIRECTION_LEFT
                     ? SCROLL_DIRECTION_RIGHT
                     : SCROLL_DIRECTION_LEFT;
 
-                //setInitialBlocksOpacity(animationBlocksDOM, visibleBlocksIndexes);
+                //setInitialBlocksOpacity(blocksDOM, visibleBlocksIndexes);
                 //proceedRestoringInitialElementsSettings();
             }
-
-            /*
-                Finish animation
-             */
-            animationPrevTime = new Date();
-            window.cancelAnimationFrame(cancelAnimationFrameCallback);
-            cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimation);
         };
 
-        function proceedAnimationMoving(blocksDOM, trackedBlocksIndexes, animationSectionScrollDirection) {
-            trackedBlocksIndexes.forEach((index) => {
-                const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
-                    blockPicturesLen = blockPicturesDOM.length,
-                    blockShadowsDOM = blocksDOM[index].getElementsByClassName('shadow'),
-                    blockShadowsLen = blockShadowsDOM.length,
-                    blockDOM = blocksDOM[index];
-
-                // SET PICTURES
-                for (let i = 0; i < blockPicturesLen; i += 1) {
-                    const sign = i % 2 === 0 ? 1 : -1;
-                    //animateElementTranslate3d(blockPicturesDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
-                }
-
-                // SET SHADOW
-                for (let i = 0; i < blockShadowsLen; i += 1) {
-                    const sign = i % 2 === 0 ? 1 : -1;
-                    //animateElementTranslate3d(blockShadowsDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
-                }
-
-                // Block moving
-                animateElementTranslate3d(blockDOM, animationSectionScrollDirection, 1, ANIMATION_TRANSLATE_3D_MOVING);
-            });
-
-            // BLOCK OPACITY
-            // const blockFirstDOM = blocksDOM[trackedBlocksIndexes[0]],
-            //     blockSecondDOM = blocksDOM[trackedBlocksIndexes[1]];
-            // let opacityChangeSpeed1 = 0,
-            //     opacityChangeSpeed2 = 0;
-            //
-            // if (animationSectionScrollDirection === SCROLL_DIRECTION_LEFT) {
-            //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED_INCREASED;
-            //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED;
-            // } else if (animationSectionScrollDirection === SCROLL_DIRECTION_RIGHT) {
-            //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED;
-            //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED_INCREASED;
-            // }
-            //
-            // changeOpacity(blockFirstDOM, opacityChangeSpeed1, animationSectionScrollDirection);
-            // const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
-            // changeOpacity(blockSecondDOM, opacityChangeSpeed2, animationSectionScrollDirection);
+        if (cancelAnimationIntervalCb) {
+            clearInterval(cancelAnimationIntervalCb);
         }
-
-        function proceedRestoringInitialElementsSettings() {
-            // RESTORE default elements position
-            window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCallback);
-            restoreInitialAnimationSettings();
-        }
-
-        // Start first automatic animation
-        cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+        cancelAnimationIntervalCb = setInterval(() => {
+            // Start first automatic animation
+            window.cancelAnimationFrame(cancelAnimationFrameCb);
+            cancelAnimationFrameCb = requestAnimationFrame(proceedAnimationFn);
+        }, 3000);
     }
+
+    function proceedElementsMoving(blocksDOM, trackedBlocksIndexes, animationSectionScrollDirection) {
+        trackedBlocksIndexes.forEach((index) => {
+            const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
+                blockPicturesLen = blockPicturesDOM.length,
+                blockShadowsDOM = blocksDOM[index].getElementsByClassName('shadow'),
+                blockShadowsLen = blockShadowsDOM.length,
+                blockDOM = blocksDOM[index];
+
+            // SET PICTURES
+            for (let i = 0; i < blockPicturesLen; i += 1) {
+                const sign = i % 2 === 0 ? 1 : -1;
+                //animateElementTranslate3d(blockPicturesDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
+            }
+
+            // SET SHADOW
+            for (let i = 0; i < blockShadowsLen; i += 1) {
+                const sign = i % 2 === 0 ? 1 : -1;
+                //animateElementTranslate3d(blockShadowsDOM[i], animationSectionScrollDirection, sign, ANIMATION_TRANSLATE_3D_MOVING);
+            }
+
+            // Block moving
+            //animateElementTranslate3d(blockDOM, animationSectionScrollDirection, 1, ANIMATION_TRANSLATE_3D_MOVING);
+        });
+
+        // BLOCK OPACITY
+        // const blockFirstDOM = blocksDOM[trackedBlocksIndexes[0]],
+        //     blockSecondDOM = blocksDOM[trackedBlocksIndexes[1]];
+        // let opacityChangeSpeed1 = 0,
+        //     opacityChangeSpeed2 = 0;
+        //
+        // if (animationSectionScrollDirection === SCROLL_DIRECTION_LEFT) {
+        //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED_INCREASED;
+        //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED;
+        // } else if (animationSectionScrollDirection === SCROLL_DIRECTION_RIGHT) {
+        //     opacityChangeSpeed1 = CHANGE_OPACITY_SPEED;
+        //     opacityChangeSpeed2 = CHANGE_OPACITY_SPEED_INCREASED;
+        // }
+        //
+        // changeOpacity(blockFirstDOM, opacityChangeSpeed1, animationSectionScrollDirection);
+        // const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
+        // changeOpacity(blockSecondDOM, opacityChangeSpeed2, animationSectionScrollDirection);
+    }
+
+    function proceedRestoringInitialElementsSettings() {
+        // RESTORE default elements position
+        window.cancelAnimationFrame(cancelAnimationProceedRestoringInitialElementsSettingsFrameCb);
+        restoreInitialAnimationSettings();
+    }
+
+    function proceedSectionMoving(sectionToBeScrolled) {
+        sectionDOM.style.left = sectionToBeScrolled + 'px';
+    }
+
 
     /*
         ============================================================
@@ -602,56 +585,56 @@ const settings = {
     //
     //     // CLEAR PREV ANIMATION RUNNERS
     //     clearTimeout(timeOutId);
-    //     window.cancelAnimationFrame(cancelAnimationFrameCallback);
+    //     window.cancelAnimationFrame(cancelAnimationFrameCb);
     //
-    //     ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP * 5;
+    //     SECTION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP * 5;
     //     ANIMATION_TRANSLATE_3D_MOVING = DEFUALT_ANIMATION_TRANSLATE_3D_MOVING_USER;
     //     if (userCurrTop < userPrevTop) {
-    //         scrollDirection = ANIMATION_DIRECTION_UP;
+    //         sectionScrollDirection = ANIMATION_DIRECTION_UP;
     //     } else {
-    //         scrollDirection = ANIMATION_DIRECTION_DOWN;
+    //         sectionScrollDirection = ANIMATION_DIRECTION_DOWN;
     //     }
     //     userPrevTop = userCurrTop;
     //     setUserScrollTransitions();
     //
-    //     setInitialBlocksOpacity(animationBlocksDOM, animationBlocksDOM.length - 1);
+    //     setInitialBlocksOpacity(blocksDOM, blocksDOM.length - 1);
     //
-    //     cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+    //     cancelAnimationFrameCb = requestAnimationFrame(proceedAnimationFn);
     //     timeOutId = setTimeout(() => {
     //         ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
-    //         ANIMATION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
+    //         SECTION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP;
     //
     //         removeUserScrollTransitions();
-    //         window.cancelAnimationFrame(cancelAnimationFrameCallback);
-    //         cancelAnimationFrameCallback = requestAnimationFrame(proceedAnimationFn);
+    //         window.cancelAnimationFrame(cancelAnimationFrameCb);
+    //         cancelAnimationFrameCb = requestAnimationFrame(proceedAnimationFn);
     //     }, SCROLL_FPS);
     // }
     //
     // function setUserScrollTransitions() {
-    //     animationSectionDOM.classList.add('section__user_scroll');
+    //     sectionDOM.classList.add('section__user_scroll');
     //
-    //     const animationBlocksDOMLen = animationBlocksDOM.length;
+    //     const animationBlocksDOMLen = blocksDOM.length;
     //     for(let i = 0; i < animationBlocksDOMLen; i += 1) {
-    //         animationBlocksDOM[i].classList.add('block__user-scroll')
+    //         blocksDOM[i].classList.add('block__user-scroll')
     //     }
     //
-    //     const animationPicturesDOMLen = animationPicturesDOM.length;
+    //     const animationPicturesDOMLen = picturesDOM.length;
     //     for(let i = 0; i < animationPicturesDOMLen; i += 1) {
-    //         animationPicturesDOM[i].classList.add('picture__user-scroll')
+    //         picturesDOM[i].classList.add('picture__user-scroll')
     //     }
     // }
     //
     // function removeUserScrollTransitions() {
-    //     animationSectionDOM.classList.remove('section__user_scroll');
+    //     sectionDOM.classList.remove('section__user_scroll');
     //
-    //     const animationBlocksDOMLen = animationBlocksDOM.length;
+    //     const animationBlocksDOMLen = blocksDOM.length;
     //     for(let i = 0; i < animationBlocksDOMLen; i += 1) {
-    //         animationBlocksDOM[i].classList.remove('block__user-scroll')
+    //         blocksDOM[i].classList.remove('block__user-scroll')
     //     }
     //
-    //     const animationPicturesDOMLen = animationPicturesDOM.length;
+    //     const animationPicturesDOMLen = picturesDOM.length;
     //     for(let i = 0; i < animationPicturesDOMLen; i += 1) {
-    //         animationPicturesDOM[i].classList.remove('picture__user-scroll')
+    //         picturesDOM[i].classList.remove('picture__user-scroll')
     //     }
     // }
 })(settings);

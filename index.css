@@ -45,8 +45,9 @@ body {
 
 .section {
     position: absolute;
+    left: 0;
     display: flex;
-    transition: 4s; /* CHANGE SECTION TRANSITION HERE */
+    transition: 1s; /* CHANGE SECTION TRANSITION HERE */
     transition-timing-function: ease;
 }
 
