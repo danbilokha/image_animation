@@ -334,32 +334,22 @@ const settings = {
                     blockSecondRowDOM = blocks[i].getElementsByClassName('row-second')[0],
                     blockDOM = blocks[i];
 
-                setInitialRowElementsPosition(blockFirstRowDOM, i, ANIMATION_DIRECTION_DOWN);
-                setInitialRowElementsPosition(blockSecondRowDOM, i, ANIMATION_DIRECTION_UP);
+                setInitialRowElementsPosition(blockFirstRowDOM, 0, ANIMATION_DIRECTION_DOWN);
+                setInitialRowElementsPosition(blockSecondRowDOM, 0, ANIMATION_DIRECTION_UP);
 
                 // (SET): DEFAULT blocksDOM transition
-                const blockDOMUniqueId = setUniqueId(blockDOM, Math.random(), Math.random(), Math.random());
-                saveInitialAnimationSettings(blockDOMUniqueId, 0, 0, 0);
+                const block_x = Math.random(),
+                    block_y = Math.random();
+                setTranslate3d(
+                    blockDOM,
+                    block_x,
+                    block_y,
+                    PICTURE_DIMENSION_VALUE
+                );
+                const blockDOMUniqueId = setUniqueId(blockDOM, block_x, block_y, PICTURE_DIMENSION_VALUE);
+                saveInitialAnimationSettings(blockDOMUniqueId, block_x, block_y, PICTURE_DIMENSION_VALUE);
             }
         }, blocksDOM, foundedBlocks);
-    }
-
-    function setInitialBlocksOpacity(blocks = blocksDOM, visibleBlocksIndexes) {
-        let _visibleBlocksIndexes = visibleBlocksIndexes;
-        if (typeof _visibleBlocksIndexes === 'number') {
-            _visibleBlocksIndexes = [];
-            for (let i = 0; i < visibleBlocksIndexes; i += 1) {
-                _visibleBlocksIndexes.push(i);
-            }
-        }
-
-        blocks[_visibleBlocksIndexes[0]].style.opacity = FIRST_BLOCK_OPACITY;
-        blocks[_visibleBlocksIndexes[1]].style.opacity = SECOND_BLOCK_OPACITY;
-        blocks[_visibleBlocksIndexes[2]].style.opacity = THIRD_BLOCK_OPACITY;
-
-        for (let i = 2; i < _visibleBlocksIndexes.length; i += 1) {
-            blocks[i].style.opacity = FULL_OPACITY;
-        }
     }
 
     function restoreInitialElementsPositions() {
@@ -456,35 +446,48 @@ const settings = {
     }
 
     function proceedElementsMoving(sectionScrolled, sectionScrollDirection) {
-        let blocksIndexesToWorkWith = getBlocksToWorkWith(sectionScrolled, BLOCKS_TO_WORK_WITH_SCROLL);
+        let blocksIndexesToWorkWith = getBlocksToWorkWith(sectionScrolled, BLOCKS_TO_WORK_WITH_SCROLL + 1),
+            blocksIndexesToWorkWithLen = blocksIndexesToWorkWith.length;
 
-        blocksIndexesToWorkWith.forEach((index) => {
+        blocksIndexesToWorkWith.forEach((index, i) => {
             const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
                 blockPicturesLen = blockPicturesDOM.length,
                 blockShadowsDOM = blocksDOM[index].getElementsByClassName('shadow'),
                 blockShadowsLen = blockShadowsDOM.length,
-                blockDOM = blocksDOM[index];
-
+                blockDOM = blocksDOM[index],
+                movableSalt = blocksIndexesToWorkWithLen - i;
+console.log('movableSalt', movableSalt);
             // SET PICTURES
             for (let i = 0; i < blockPicturesLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
-                animateElementTranslate3d(blockPicturesDOM[i], sign, sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING);
+                animateElementTranslate3d(
+                    blockPicturesDOM[i],
+                    sign,
+                    sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING * movableSalt
+                );
             }
 
             // SET SHADOW
             for (let i = 0; i < blockShadowsLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
-                animateElementTranslate3d(blockShadowsDOM[i], sign, sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING * 0.5);
+                animateElementTranslate3d(
+                    blockShadowsDOM[i],
+                    sign,
+                    sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING * 0.5 * movableSalt
+                );
             }
 
             // Block moving
-            animateElementTranslate3d(blockDOM, 1, sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING * 2);
+            animateElementTranslate3d(
+                blockDOM,
+                1,
+                -ANIMATION_TRANSLATE_3D_MOVING * movableSalt
+            );
         });
     }
 
     function proceedBlocksOpacity(sectionScrolled, sectionScrollDirection) {
         let blocksIndexesToWorkWith = getBlocksToWorkWith(sectionScrolled, BLOCKS_TO_WORK_WITH_SCROLL);
-        console.log(blocksIndexesToWorkWith);
 
         const prevBlock = blocksDOM[blocksIndexesToWorkWith[0] - 1],
             blockFirstDOM = blocksDOM[blocksIndexesToWorkWith[0]],
@@ -603,33 +606,5 @@ const settings = {
 
             proceedAutomaticalAnimationMoving();
         }, 50)
-    }
-
-    function setUserScrollTransitions() {
-        sectionDOM.classList.add('section__user_scroll');
-
-        const animationBlocksDOMLen = blocksDOM.length;
-        for (let i = 0; i < animationBlocksDOMLen; i += 1) {
-            blocksDOM[i].classList.add('block__user-scroll')
-        }
-
-        const animationPicturesDOMLen = picturesDOM.length;
-        for (let i = 0; i < animationPicturesDOMLen; i += 1) {
-            picturesDOM[i].classList.add('picture__user-scroll')
-        }
-    }
-
-    function removeUserScrollTransitions() {
-        sectionDOM.classList.remove('section__user_scroll');
-
-        const animationBlocksDOMLen = blocksDOM.length;
-        for (let i = 0; i < animationBlocksDOMLen; i += 1) {
-            blocksDOM[i].classList.remove('block__user-scroll')
-        }
-
-        const animationPicturesDOMLen = picturesDOM.length;
-        for (let i = 0; i < animationPicturesDOMLen; i += 1) {
-            picturesDOM[i].classList.remove('picture__user-scroll')
-        }
     }
 })(settings);

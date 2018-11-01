@@ -47,12 +47,8 @@ body {
     position: absolute;
     left: 0;
     display: flex;
-    transition: 0.4s; /* CHANGE SECTION TRANSITION HERE */
+    transition: 0.2s; /* CHANGE SECTION TRANSITION HERE */
     transition-timing-function: ease;
-}
-
-.section__user-scroll {
-    transition: 0.5s;
 }
 
 .block {
@@ -64,12 +60,8 @@ body {
     margin-right: 125px;
     border: 5px none black;
     background-color: transparent;
-    transition: 2s; /* FOR SMOOTHLY BLOCK OPACITY */
+    transition: 0.5s; /* FOR SMOOTHLY BLOCK OPACITY */
     transform-origin: 0 50%;
-}
-
-.block__user-scroll {
-    transition: 1s;
 }
 
 .block__row {
