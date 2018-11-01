@@ -456,7 +456,7 @@ const settings = {
                 blockShadowsLen = blockShadowsDOM.length,
                 blockDOM = blocksDOM[index],
                 movableSalt = blocksIndexesToWorkWithLen - i;
-console.log('movableSalt', movableSalt);
+
             // SET PICTURES
             for (let i = 0; i < blockPicturesLen; i += 1) {
                 const sign = i % 2 === 0 ? 1 : -1;
