@@ -86,15 +86,6 @@ const settings = {
         THIRD_BLOCK_OPACITY = DEFAULT_THIRD_BLOCK_OPACITY,
         CALCULATION_SALT = settings.CALCULATION_SALT || 2;
 
-    /*
-        ============================================================
-                                NOT CHANGEABLE OPTIONS
-        ============================================================
-     */
-    let TRANSLATE_3D_INITIAL_VALUE = DEFAULT_TRANSLATE_3D_INITIAL_VALUE,
-        SECTION_SCROLL_STEP = DEFAULT_ANIMATION_SCROLL_STEP,
-        ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
-
     let cancelAnimationIntervalCb,
         cancelAnimationFrameCb,
         cancelAnimationProceedRestoringInitialElementsSettingsFrameCb,
@@ -110,8 +101,8 @@ const settings = {
         Animation state variables
      */
     const defaultElementsPositions = {};
-    let sectionScrollDirection = SCROLL_DIRECTION_LEFT;
 
+    let sectionScrollDirection = SCROLL_DIRECTION_LEFT;
     document.addEventListener('DOMContentLoaded', run);
     //window.addEventListener('resize', run);
 
@@ -125,6 +116,10 @@ const settings = {
         BLOCKS_FIT_IN_WINDOW = CLIENT_INNER_WIDTH / BLOCK_WIDTH,
         BLOCKS_TO_WORK_WITH = Math.round(BLOCKS_FIT_IN_WINDOW),
         COUNT_OF_TRACKING_BLOCKS = Math.round(BLOCKS_FIT_IN_WINDOW + COUNT_OF_BLOCK_ADDITIONAL_TRACK);
+
+    let TRANSLATE_3D_INITIAL_VALUE = DEFAULT_TRANSLATE_3D_INITIAL_VALUE,
+        SECTION_SCROLL_STEP = BLOCK_WIDTH,
+        ANIMATION_TRANSLATE_3D_MOVING = DEFAULT_ANIMATION_TRANSLATE_3D_MOVING_SYSTEM;
 
     BLOCKS.padding = getBlocksLeftPaddings();
 
@@ -296,9 +291,10 @@ const settings = {
             foundedPicturesLen = picturesDOM.length,
             shadowsDOM = rowElem.getElementsByClassName('shadow'),
             isFloating = (order === ANIMATION_DIRECTION_DOWN) ? -1 : 1;
-        const translateInitial = ((DEFAULT_TRANSLATE_3D_INITIAL_VALUE - blockNumber) > 0)
-            ? (DEFAULT_TRANSLATE_3D_INITIAL_VALUE - blockNumber)
-            : 0;
+        // const translateInitial = ((DEFAULT_TRANSLATE_3D_INITIAL_VALUE - blockNumber) > 0)
+        //     ? (DEFAULT_TRANSLATE_3D_INITIAL_VALUE - blockNumber)
+        //     : 0;
+        const translateInitial = (DEFAULT_TRANSLATE_3D_INITIAL_VALUE * ((BLOCKS_NUMBER - blockNumber) * 0.1));
 
         // Use foundedPicturesLen here because count of picturesDOM is equal to
         // count of shadows
@@ -402,44 +398,20 @@ const settings = {
         }
     }
 
+    function restoreInitialElementPositions(elemDOM) {
+        const elemId = elemDOM.id;
+        console.log(elemId);
+        setTranslate3d(
+            elemDOM,
+            defaultElementsPositions[elemId].x,
+            defaultElementsPositions[elemId].y,
+            defaultElementsPositions[elemId].z,
+        );
+    }
+
     function animationRunner() {
         let sectionScrolledBordersFrameTimeout,
             sectionScrolled = DEFAULT_SECTION_SCROLLED;
-
-        // function updateBlocksTrackList(blocks, currentTrackedBlocks, sectionScrolled, sectionScrollDirection) {
-        //     let _currentTrackedBlocks = [...currentTrackedBlocks],
-        //         _sectionScrolled = Math.abs(sectionScrolled),
-        //         _sizeSectionScrolledTo = 0;
-        //
-        //     if (sectionScrollDirection === ANIMATION_DIRECTION_DOWN) {
-        //         sectionScrollMax = (sectionScrollMax > _sectionScrolled)
-        //             ? sectionScrollMax
-        //             : _sectionScrolled;
-        //
-        //         _sizeSectionScrolledTo = _sectionScrolled;
-        //     }
-        //
-        //     if (sectionScrollDirection === ANIMATION_DIRECTION_UP) {
-        //         _sizeSectionScrolledTo = sectionScrollMax - _sectionScrolled;
-        //     }
-        //
-        //     const _blockScrolled = Math.floor(_sizeSectionScrolledTo / BLOCK_WIDTH) - 1;
-        //     if (_blockScrolled <= 0 || _blockScrolled === blockScrolled) {
-        //         return [..._currentTrackedBlocks];
-        //     }
-        //     blockScrolled = _blockScrolled;
-        //
-        //     const scrollNormalized = sectionScrollDirection * -1,
-        //         firstTracked = _currentTrackedBlocks[0],
-        //         lastTracked = _currentTrackedBlocks[_currentTrackedBlocks.length - 1];
-        //
-        //     // Check IF first and last future elements exist
-        //     if (!blocks[firstTracked + scrollNormalized] || !blocks[lastTracked + scrollNormalized]) {
-        //         return [..._currentTrackedBlocks];
-        //     }
-        //
-        //     return _currentTrackedBlocks.map(index => index + scrollNormalized);
-        // }
 
         proceedAnimationFn = function proceedAnimation() {
             console.log('proceedAnimationFn');
@@ -510,8 +482,6 @@ const settings = {
         let _sectionScrolled = Math.abs(sectionScrolled),
             blocksIndexesToWorkWith = getBlocksToWorkWith(sectionScrolled);
 
-        console.log(blocksIndexesToWorkWith);
-
         blocksIndexesToWorkWith.forEach((index) => {
             const blockPicturesDOM = blocksDOM[index].getElementsByClassName('picture'),
                 blockPicturesLen = blockPicturesDOM.length,
@@ -565,9 +535,10 @@ const settings = {
             yPicNew = (yPic + yPic * salt * sign * 0.2),
             zPicNew = zPic;
 
-
-        xPicNew = Math.abs(xPicNew) > 20 ? (+xPic) : xPicNew;
-        yPicNew = Math.abs(yPicNew) > 20 ? (+yPic) : yPicNew;
+        if (Math.abs(xPicNew) > 15 || Math.abs(yPicNew) > 15) {
+            restoreInitialElementPositions(_elemDOM);
+            return
+        }
 
         _elemDOM.style.transform = `translate3d(
                 ${xPicNew}${UNIT_TRANSLATE_3D_X}, 
