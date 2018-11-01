@@ -226,22 +226,21 @@ const settings = {
     }
 
     function changeOpacity(elemDOM, changeSpeed, animationSectionScrollDirection) {
-        let currentBlockDOMOpacity = +elemDOM.style.opacity;
+        let currentBlockDOMOpacity = parseFloat(elemDOM.style.opacity);
 
         if (isNaN(currentBlockDOMOpacity)) {
             currentBlockDOMOpacity = 1;
         }
 
-        let newBlockDOMOpacity = currentBlockDOMOpacity + changeSpeed * animationSectionScrollDirection;
+        // if (newBlockDOMOpacity > currentBlockDOMOpacity && newBlockDOMOpacity > 1) {
+        //     newBlockDOMOpacity = 1;
+        // }
+        //
+        // if (newBlockDOMOpacity < currentBlockDOMOpacity && newBlockDOMOpacity < 0) {
+        //     newBlockDOMOpacity = 0;
+        // }
 
-        if (newBlockDOMOpacity > currentBlockDOMOpacity && newBlockDOMOpacity > 1) {
-            newBlockDOMOpacity = 1;
-        }
-
-        if (newBlockDOMOpacity < currentBlockDOMOpacity && newBlockDOMOpacity < 0) {
-            newBlockDOMOpacity = 0;
-        }
-
+        const newBlockDOMOpacity = currentBlockDOMOpacity + changeSpeed * animationSectionScrollDirection;
         elemDOM.style.opacity = newBlockDOMOpacity;
     }
 
@@ -400,7 +399,6 @@ const settings = {
 
     function restoreInitialElementPositions(elemDOM) {
         const elemId = elemDOM.id;
-        console.log(elemId);
         setTranslate3d(
             elemDOM,
             defaultElementsPositions[elemId].x,
@@ -414,7 +412,6 @@ const settings = {
             sectionScrolled = DEFAULT_SECTION_SCROLLED;
 
         proceedAnimationFn = function proceedAnimation() {
-            console.log('proceedAnimationFn');
             const sectionToBeScrolled = sectionScrolled + (SECTION_SCROLL_STEP * sectionScrollDirection);
 
             // Check, that section is moving in right frames
@@ -505,9 +502,11 @@ const settings = {
             animateElementTranslate3d(blockDOM, 1, sectionScrollDirection * ANIMATION_TRANSLATE_3D_MOVING * 2);
         });
 
-        // BLOCK OPACITY
-        // const blockFirstDOM = blocksDOM[trackedBlocksIndexes[0]],
-        //     blockSecondDOM = blocksDOM[trackedBlocksIndexes[1]];
+        // console.log(blocksIndexesToWorkWith);
+        //
+        // // BLOCK OPACITY
+        // const blockFirstDOM = blocksDOM[blocksIndexesToWorkWith[0]],
+        //     blockSecondDOM = blocksDOM[blocksIndexesToWorkWith[1]];
         // let opacityChangeSpeed1 = 0,
         //     opacityChangeSpeed2 = 0;
         //
@@ -520,7 +519,7 @@ const settings = {
         // }
         //
         // changeOpacity(blockFirstDOM, opacityChangeSpeed1, sectionScrollDirection);
-        // const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
+        // //const nextBlockAfterTracked = blocksDOM[trackedBlocksIndexes[trackedBlocksIndexes.length - 1] + 1];
         // changeOpacity(blockSecondDOM, opacityChangeSpeed2, sectionScrollDirection);
     }
 
